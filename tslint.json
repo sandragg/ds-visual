@@ -1,0 +1,32 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier", "tslint-eslint-rules"],
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "coverage/lcov-report/*.js"
+    ]
+  },
+  "rules": {
+    "jsx-boolean-value": false,
+    "jsx-curly-spacing": [true, "never"],
+    "jsx-equals-spacing": [true, "never"],
+    "jsx-key": true,
+    "jsx-space-before-trailing-slash": true,
+    "jsx-wrap-multiline": true,
+    "switch-default": true,
+    "no-magic-numbers": [true, -1, 0, 1, 404],
+    "no-multi-spaces": true,
+    "quotemark": [true, "single", "jsx-double"],
+    "no-trailing-whitespace": [true, "ignore-comments", "ignore-jsdoc"],
+    "ter-no-mixed-spaces-and-tabs": {
+      "type": "tabs",
+      "smartTabs": true
+    },
+    "object-curly-spacing": true,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "only-arrow-functions": false,
+    "interface-name": false
+  }
+}
