@@ -23,6 +23,9 @@
 .header__logo {
 	height: 34px;
 	width: 210px;
+
+	object-fit: contain;
+	vertical-align: middle;
 }
 
 .header_main .header__nav {
