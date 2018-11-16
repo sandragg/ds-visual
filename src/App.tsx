@@ -3,13 +3,14 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { ROUTES } from './services/routes';
 import { Header } from './components/header/header';
 import * as Pages from './pages';
+import './App.css';
 
 const App = () => {
 	return (
 		<BrowserRouter>
-			<div className="App">
+			<div className="page">
 				<Header />
-				<main>
+				<main className="page__container">
 					<Route exact path={ROUTES.HOME} component={Pages.HomePage} />
 					<Route path={ROUTES.ALGS_AND_DS} component={Pages.GalleryPage} />
 					<Route path={ROUTES.ABOUT} component={Pages.InfoPage} />
