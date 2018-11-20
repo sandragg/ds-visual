@@ -1,25 +1,31 @@
 .struct-pic {
+	--margin-bottom: calc(var(--card-width) * 0.08);
+
 	position: relative;
+	transition: 500ms;
 
 	display: flex;
 	flex-direction: column;
 
-	width: 330px;
-	height: 315px;
+	width: var(--card-width);
+	height: calc(var(--card-width) - var(--margin-bottom));
 
-	margin: 28px;
+	margin: 0 0 var(--margin-bottom);
 
 	border-radius: 10px;
-	background-color: #1F3DA7;
+	background-color: #fff;
 }
 
 .struct-pic_interact:hover {
-	transform: scale(0.99);
+	transform: scale(1.02);
 }
 
-.struct-pic_interact:hover .struct-pic__caption {
-	color: #ED5B3B;
-	background-color: #fff;
+.struct-pic_interact:hover  .struct-pic__caption {
+	background-color: #E7401D;
+}
+
+.struct-pic_interact:active  .struct-pic__caption {
+	background-color: #1F3DA7;
 }
 
 .struct-pic__img {
@@ -30,45 +36,39 @@
 	border-radius: 10px;
 }
 
+/* TODO Fix it (from info card) */
 .struct-card__pic .struct-pic__img {
 	border-radius: 0 10px 10px 0;
 }
 
 .struct-pic__caption {
+	--caption-height: calc(var(--margin-bottom) * 2);
+
+	box-sizing: border-box;
 	position: absolute;
 	bottom: 0;
 	left: 50%;
-
-	width: 166px;
-	height: 55px;
-	border-radius: 20px;
-
 	transform: translate(-50%, 50%);
 
+	min-width: calc(var(--card-width) * 0.5);
+	width: fit-content;
+	height: var(--caption-height);
+
+	padding: 0 10px;
+
+	border-radius: 20px;
 	background-color: #ED5B3B;
 
 	font-family: Rubik, sans-serif;
 	font-size: 24px;
 	font-weight: bold;
 	color: white;
-
 	text-align: center;
-	line-height: 55px;
+	line-height: var(--caption-height);
 }
 
 @media screen and (max-width: 1024px) {
-	.struct-pic {
-		width: 260px;
-		height: 247px;
-
-		margin: 22px;
-	}
-
 	.struct-pic__caption {
-		width: 130px;
-		height: 43px;
-
-		font-size: 16px;
-		line-height: 43px;
+		font-size: 20px;
 	}
 }
