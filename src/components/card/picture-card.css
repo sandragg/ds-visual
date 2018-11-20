@@ -1,0 +1,74 @@
+.struct-pic {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+
+	width: 330px;
+	height: 315px;
+
+	margin: 28px;
+
+	border-radius: 10px;
+	background-color: #1F3DA7;
+}
+
+.struct-pic_interact:hover {
+	transform: scale(0.99);
+}
+
+.struct-pic_interact:hover .struct-pic__caption {
+	color: #ED5B3B;
+	background-color: #fff;
+}
+
+.struct-pic__img {
+	height: 100%;
+
+	object-fit: fill;
+
+	border-radius: 10px;
+}
+
+.struct-card__pic .struct-pic__img {
+	border-radius: 0 10px 10px 0;
+}
+
+.struct-pic__caption {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+
+	width: 166px;
+	height: 55px;
+	border-radius: 20px;
+
+	transform: translate(-50%, 50%);
+
+	background-color: #ED5B3B;
+
+	font-family: Rubik, sans-serif;
+	font-size: 24px;
+	font-weight: bold;
+	color: white;
+
+	text-align: center;
+	line-height: 55px;
+}
+
+@media screen and (max-width: 1024px) {
+	.struct-pic {
+		width: 260px;
+		height: 247px;
+
+		margin: 22px;
+	}
+
+	.struct-pic__caption {
+		width: 130px;
+		height: 43px;
+
+		font-size: 16px;
+		line-height: 43px;
+	}
+}
