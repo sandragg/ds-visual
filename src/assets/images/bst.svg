@@ -1,0 +1,15 @@
+<svg width="330" height="315" viewBox="0 0 330 315" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="161.5" cy="62.5" r="18.5" fill="#1F3DA7" stroke="#1F3DA7" stroke-width="4" />
+    <circle cx="114" cy="117" r="19" stroke="#1F3DA7" stroke-width="4" />
+    <path d="M228 117C228 127.539 219.672 136 209.5 136C199.328 136 191 127.539 191 117C191 106.461 199.328 98 209.5 98C219.672 98 228 106.461 228 117Z" stroke="#1F3DA7" stroke-width="4" />
+    <path d="M281 185C281 195.539 272.672 204 262.5 204C252.328 204 244 195.539 244 185C244 174.461 252.328 166 262.5 166C272.672 166 281 174.461 281 185Z" stroke="#1F3DA7" stroke-width="4" />
+    <circle cx="161.5" cy="185.5" r="18.5" stroke="#1F3DA7" stroke-width="4" />
+    <circle cx="67.5" cy="185.5" r="18.5" stroke="#1F3DA7" stroke-width="4" />
+    <circle cx="221.5" cy="245.5" r="18.5" stroke="#1F3DA7" stroke-width="4" />
+    <line x1="147.71" y1="76.0351" x2="127.812" y2="103.892" stroke="#1F3DA7" stroke-width="3" />
+    <line x1="175.457" y1="72.8278" x2="201.987" y2="102.011" stroke="#1F3DA7" stroke-width="3" />
+    <line x1="202.078" y1="135.757" x2="174.22" y2="172.9" stroke="#1F3DA7" stroke-width="3" />
+    <line x1="222.137" y1="133.021" x2="253.137" y2="169.021" stroke="#1F3DA7" stroke-width="3" />
+    <line x1="102.629" y1="133.046" x2="77.4249" y2="170.189" stroke="#1F3DA7" stroke-width="3" />
+    <line x1="176.711" y1="200.101" x2="208.548" y2="230.611" stroke="#1F3DA7" stroke-width="3" />
+</svg>
