@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ROUTES } from '../../services/routes';
 import { NavLink } from 'react-router-dom';
 import './header.css';
+import logo from '../../assets/images/logo.png';
 
 interface Props {
 	to: string,
@@ -21,8 +22,8 @@ const Link = ({ to, children }: Props) => (
 
 const Header = () => (
 	<header className="header header_main">
-		{/*Need LOGO remove*/}
-		<div />
+		{/* TODO Need LOGO remove*/}
+		<div><img className="header__logo" src={logo} alt="logo" /></div>
 		{/*Need LOGO remove*/}
 
 		<nav className="header__nav">

@@ -3,26 +3,32 @@
 	position: fixed;
 	top: 0;
 	left: 0;
+
+	width: 100%;
 }
 
 .header_main {
-	height: 50px;
-	width: 100%;
+	height: var(--header-height);
+	z-index: 100;
 
-	padding: 0 5%;
+	padding: 0 10%;
 
 	display: flex;
 	flex-direction: row;
 	align-items: baseline;
 	justify-content: space-between;
 
-	line-height: 60px;
+	line-height: calc(var(--header-height) + 10px);
 	background: #fff;
 }
 
+/* TODO Need real logo  */
 .header__logo {
 	height: 34px;
 	width: 210px;
+
+	object-fit: contain;
+	vertical-align: middle;
 }
 
 .header_main .header__nav {
@@ -40,15 +46,17 @@
 	text-decoration: none;
 }
 
+.header_main .nav__link:last-child {
+	padding-right: 0;
+}
+
 .header_main .nav__link_active  {
 	color: #ED5B3B;
 }
 
 @media screen and (max-width: 1024px) {
 	.header_main {
-		height: 40px;
-
-		line-height: 50px;
+		line-height: calc(var(--header-height) + 5px);
 	}
 
 	.header__logo {
@@ -66,19 +74,13 @@
 }
 
 @media screen and (min-width: 1920px) {
-	.header_main {
-		height: 60px;
-
-		line-height: 70px;
-	}
-
 	.header__logo {
 		height: 44px;
 		width: 305px;
 	}
 
 	.header_main .header__nav {
-		font-size: 16px;
+		font-size: 20px;
 	}
 
 	.header_main .nav__link {
