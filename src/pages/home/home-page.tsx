@@ -1,56 +1,24 @@
-import * as React from 'react';
+import React, {
+	useEffect,
+	useState
+} from 'react';
 import './home-page.css';
-import { DirectionArrow } from '../../components/direction-arrow';
-import { CardList } from '../../components/card-list/card-list';
-import bst from 'src/assets/images/bst.svg';
-import linkedList from 'src/assets/images/linked-list.svg';
+import { DirectionArrow } from 'src/components/direction-arrow';
+import { CardList } from 'src/components/card-list';
+import { StructureModel } from 'src/api/structure-model';
 import dsv from 'src/assets/images/dsv.svg';
 import boxes from 'src/assets/images/boxes.svg';
-
-const struct = [
-	{
-		id: 1,
-		picPath: bst,
-		title: 'BST',
-		description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-							ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-							represented as a set of linked nodes.`
-	},
-	{
-		id: 2,
-		picPath: linkedList,
-		title: 'Linked List',
-		description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-							ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-							represented as a set of linked nodes.`
-	},
-	{
-		id: 3,
-		picPath: 'https://e3.edimdoma.ru/data/recipes/0006/0497/60497-ed4_wide.jpg',
-		title: 'Tree',
-		description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-							ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-							represented as a set of linked nodes.`
-	},
-	{
-		id: 4,
-		picPath: 'https://e3.edimdoma.ru/data/recipes/0006/0497/60497-ed4_wide.jpg',
-		title: 'Tree',
-		description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-							ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-							represented as a set of linked nodes.`
-	},
-	{
-		id: 5,
-		picPath: 'https://e3.edimdoma.ru/data/recipes/0006/0497/60497-ed4_wide.jpg',
-		title: 'Tree',
-		description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-							ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-							represented as a set of linked nodes.`
-	}
-];
+import { Structure } from 'src/services/interface';
 
 export const HomePage = () => {
+	const [ structureList, setStructureList ] = useState<Structure[] | null>(null);
+
+	useEffect(() => {
+		StructureModel
+			.getList()
+			.then(list => setStructureList(list));
+	}, []);
+
 	return (
 		<>
 			<section className="section homepage-section">
@@ -65,7 +33,7 @@ export const HomePage = () => {
 			</section>
 			<DirectionArrow>LET’S START!</DirectionArrow>
 			<section className="section structure-list-section">
-				<CardList listType="presentation" cards={struct} />
+				<CardList listType="presentation" cards={structureList} />
 			</section>
 		</>
 	);

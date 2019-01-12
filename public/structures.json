@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "src": "/images/bst.svg",
+    "title": "BST",
+    "description": "In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this, ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,represented as a set of linked nodes."
+  },
+  {
+    "id": 2,
+    "src": "/images/linked-list.svg",
+    "title": "Linked List",
+    "description": "In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this, ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,represented as a set of linked nodes."
+  },
+  {
+    "id": 3,
+    "src": "/images/stack.svg",
+    "title": "Stack",
+    "description": "In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this, ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,represented as a set of linked nodes."
+  }
+]
