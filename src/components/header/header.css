@@ -22,12 +22,9 @@
 	background: #fff;
 }
 
-/* TODO Need real logo  */
 .header__logo {
-	height: 34px;
-	width: 210px;
+	height: 35px;
 
-	object-fit: contain;
 	vertical-align: middle;
 }
 
@@ -60,8 +57,7 @@
 	}
 
 	.header__logo {
-		height: 24px;
-		width: 114px;
+		height: 30px;
 	}
 
 	.header_main .header__nav {
@@ -75,8 +71,7 @@
 
 @media screen and (min-width: 1920px) {
 	.header__logo {
-		height: 44px;
-		width: 305px;
+		height: 40px;
 	}
 
 	.header_main .header__nav {

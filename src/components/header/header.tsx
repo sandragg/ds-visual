@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ROUTES } from '../../services/routes';
+import { ROUTES } from 'src/services/routes';
 import { NavLink } from 'react-router-dom';
 import './header.css';
-import logo from '../../assets/images/logo.png';
+import logo from 'src/assets/images/logo.svg';
 
 interface Props {
 	to: string,
-	children: string
+	children: any
 }
 
 const Link = ({ to, children }: Props) => (
@@ -22,10 +22,9 @@ const Link = ({ to, children }: Props) => (
 
 const Header = () => (
 	<header className="header header_main">
-		{/* TODO Need LOGO remove*/}
-		<div><img className="header__logo" src={logo} alt="logo" /></div>
-		{/*Need LOGO remove*/}
-
+		<Link to={ROUTES.HOME}>
+			<img className="header__logo" src={logo} alt="logo" />
+		</Link>
 		<nav className="header__nav">
 			<Link to={ROUTES.HOME}>
 				Home
