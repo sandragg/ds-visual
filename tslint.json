@@ -15,7 +15,7 @@
     "jsx-space-before-trailing-slash": true,
     "jsx-wrap-multiline": true,
     "switch-default": true,
-    "no-magic-numbers": [true, -1, 0, 1, 404],
+    "no-magic-numbers": false,
     "no-multi-spaces": true,
     "quotemark": [true, "single", "jsx-double"],
     "no-trailing-whitespace": [true, "ignore-comments", "ignore-jsdoc"],
@@ -29,5 +29,6 @@
     "only-arrow-functions": false,
     "interface-name": false,
     "no-console": false
-  }
+  },
+  "defaultSeverity": "warning"
 }
