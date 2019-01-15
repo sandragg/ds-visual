@@ -12,9 +12,10 @@ const App = () => {
 				<Header />
 				<main className="page__container">
 					<Route exact path={ROUTES.HOME} component={Pages.HomePage} />
-					<Route path={ROUTES.ALGS_AND_DS} component={Pages.GalleryPage} />
+					<Route exact path={ROUTES.ALGS_AND_DS} component={Pages.GalleryPage} />
 					<Route path={ROUTES.ABOUT} component={Pages.AboutPage} />
 					<Route path={ROUTES.VISUAL} component={Pages.VisualizationPage} />
+					<Route path={ROUTES.INFO} component={Pages.InfoPage} />
 				</main>
 			</div>
 		</BrowserRouter>
