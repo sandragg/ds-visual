@@ -1,23 +1,36 @@
-import * as React from 'react';
-import { InfoCard } from '../../components/card';
-
-const struct = {
-	picPath: 'https://e3.edimdoma.ru/data/recipes/0006/0497/60497-ed4_wide.jpg',
-	title: 'Tree',
-	description: `In computer science, a tree is a widely used abstract data type (ADT) — or data structure implementing this
-						ADT—that simulates a hierarchical tree structure, with a root value and subtrees of children with a parent node,
-						represented as a set of linked nodes.`
-};
+import React, {
+	useEffect,
+	useState
+} from 'react';
+import 'src/App.css';
+import { CardList } from 'src/components/card-list';
+import { InfoCard } from 'src/components/card';
+import { Structure } from 'src/services/interface';
+import { StructureModel } from 'src/api/structure-model';
 
 export const GalleryPage = () => {
+	const [ structureList, setStructureList ] = useState<Structure[] | null>(null);
+
+	useEffect(() => {
+		StructureModel
+				.getList()
+				.then(list => setStructureList(list));
+	}, []);
+
 	return (
-		<div>
-			<InfoCard
-				picPath={struct.picPath}
-				picCaption={struct.title}
-			>
-				{struct.description}
-			</InfoCard>
-		</div>
+		<section className="section structure-list-section">
+			<CardList>
+				{structureList && structureList.map(struct => (
+					<InfoCard
+						key={struct.id}
+						id={struct.id}
+						picPath={struct.src}
+						picCaption={struct.title}
+					>
+						{struct.description}
+					</InfoCard>
+				))}
+			</CardList>
+		</section>
 	);
 };

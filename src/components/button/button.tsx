@@ -1,16 +1,17 @@
-import * as React from 'react';
+import React, { CSSProperties } from 'react';
 import './button.css';
 
 interface Props {
 	theme: string,
 	children: string,
-	shape: string,
+	style?: CSSProperties,
 	disabled?: boolean
 }
 
-const Button = ({ theme, children, shape, disabled }: Props) => (
+const Button = ({ theme, children, style, disabled }: Props) => (
 		<button
-			className={`button button_${theme} button_${shape}`}
+			className={`button button_${theme}`}
+			style={style}
 			disabled={disabled}
 		>
 			{children}

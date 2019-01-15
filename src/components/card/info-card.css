@@ -1,38 +1,85 @@
-.struct-card{
+.struct-card {
 	box-sizing: border-box;
 
-	display: flex;
-	flex-direction: row;
-	justify-content: left;
-	align-items: flex-start;
+	min-width: 600px;
+	max-width: 1400px;
 
-	max-width: 1140px;
+	padding: 20px 80px 30px 20px;
 
-	padding: 20px 0;
+	display: grid;
+	grid-template-columns: var(--card-width) auto;
+	grid-template-rows: 40px auto 60px;
+	grid-template-areas:
+		"picture title"
+		"picture description"
+		"picture buttons";
+	grid-gap: 20px;
+
+	justify-items: start;
 
 	border-radius: 10px;
-	background-color: #FFF;
+	background-color: #fff;
+}
+
+.struct-card__pic {
+	grid-area: picture;
+}
+
+.struct-card__title,
+.struct-card__description {
+	margin: 0;
+}
+
+.struct-card__title {
+	grid-area: title;
+
+	color: #34224B;
+	font-size: 36px;
+	font-weight: 600;
 }
 
 .struct-card__description{
-	height: 240px;
+	grid-area: description;
 
-	padding: 0 30px;
-
-	font-family: Barlow, sans-serif;
-}
-
-.description-title {
-	margin: 0;
-
-	line-height: 40px;
-	font-size: 36px;
-	font-weight: 600;
-	color: #ED5B3B;
-}
-
-.description-text {
 	font-size: 24px;
-	font-weight: 400;
-	color: #000;
+}
+
+.struct-card .buttons-container {
+	grid-area: buttons;
+
+	width: 100%;
+
+	display: flex;
+	justify-content: flex-start;
+}
+
+@media screen and (max-width: 1270px) {
+	.struct-card {
+		padding: 20px 30px 20px 20px;
+		grid-template-areas:
+			"picture title"
+			"picture description"
+			"buttons buttons";
+	}
+
+	.struct-card .buttons-container {
+		justify-content: space-around;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	.struct-card__title {
+		font-size: 32px;
+	}
+
+	.struct-card__description{
+		font-size: 20px;
+	}
+
+	.struct-card .buttons-container .button {
+		height: 48px;
+		border-radius: 18px;
+
+		font-size: 22px;
+	}
 }

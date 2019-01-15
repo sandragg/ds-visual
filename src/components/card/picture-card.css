@@ -36,11 +36,6 @@
 	border-radius: 10px;
 }
 
-/* TODO Fix it (from info card) */
-.struct-card__pic .struct-pic__img {
-	border-radius: 0 10px 10px 0;
-}
-
 .struct-pic__caption {
 	--caption-height: calc(var(--margin-bottom) * 2);
 
