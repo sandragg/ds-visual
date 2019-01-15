@@ -13,7 +13,7 @@ const App = () => {
 				<main className="page__container">
 					<Route exact path={ROUTES.HOME} component={Pages.HomePage} />
 					<Route path={ROUTES.ALGS_AND_DS} component={Pages.GalleryPage} />
-					<Route path={ROUTES.ABOUT} component={Pages.InfoPage} />
+					<Route path={ROUTES.ABOUT} component={Pages.AboutPage} />
 					<Route path={ROUTES.VISUAL} component={Pages.VisualizationPage} />
 				</main>
 			</div>
