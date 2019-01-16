@@ -1,7 +1,21 @@
 import {
 	ArrowParams,
-	Point
+	Point,
+	CallbackFunction,
+	PromiseDefer
 } from './interface';
+
+/* Defer Promise */
+export function defer(): PromiseDefer {
+	const deferred: any = {};
+
+	deferred.promise = new Promise((resolve: CallbackFunction, reject: CallbackFunction) => {
+		deferred.resolve = resolve;
+		deferred.reject = reject;
+	});
+
+	return deferred;
+}
 
 /* TODO check radians */
 export function calcArrowMatrix(outPoint: Point, inPoint: Point): ArrowParams {
