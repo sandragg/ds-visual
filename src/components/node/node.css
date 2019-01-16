@@ -1,0 +1,13 @@
+.node {
+	user-select: none;
+	fill: peachpuff;
+}
+
+.node__figure {
+}
+
+.node__caption {
+	fill: #000;
+	dominant-baseline: central;
+	text-anchor: middle;
+}
