@@ -1,34 +1,40 @@
-.section {
+.about-section__card {
 	box-sizing: border-box;
+
+	max-width: 1400px;
 
 	margin: auto;
-}
-
-.about-card {
-	box-sizing: border-box;
-
-	flex-direction: column;
-
-	max-width: 1125px;
-
-	padding: 20px 60px;
+	padding: 20px 90px;
 
 	border-radius: 10px;
 	background-color: #FFF;
+
+	font-size: 24px;
 }
 
-h1 {
+.card__title {
 	font-size: 36px;
 	font-weight: 600;
 	color: #34224B;
 }
 
-p, ul {
-	font-size: 24px;
-}
+.card__footer {
+	margin: 50px 0;
 
-.about-card__footer {
-	font-size: 31spx;
+	font-size: 32px;
 	font-weight: 600;
 	color: #ED5B3B;
+}
+
+@media screen and (max-width: 1024px) {
+	.about-section__card {
+		padding: 10px 50px;
+		font-size: 22px;
+	}
+	.card__title {
+		font-size: 32px;
+	}
+	.card__footer {
+		font-size: 26px;
+	}
 }
