@@ -1,4 +1,47 @@
-import { Point } from './interface';
+import {
+	ArrowParams,
+	Point
+} from './interface';
+
+/* TODO check radians */
+export function calcArrowMatrix(outPoint: Point, inPoint: Point): ArrowParams {
+	const cathetusLength: Point = {
+		x: Math.abs(inPoint.x - outPoint.x),
+		y: Math.abs(inPoint.y - outPoint.y)
+	};
+	/* Calculate an arrow length (hypotenuse) via Pythagorean theorem
+	 * and find which quadrant the arrow is located in.
+	*/
+	const hypotenuse: number = (cathetusLength.x ** 2 + cathetusLength.y ** 2) ** 0.5;
+	const rightQuadrants: boolean = inPoint.x > outPoint.x;
+	const topQuadrants: boolean = inPoint.y > outPoint.y;
+
+	const quadrantSinAlfa: number = (rightQuadrants ? cathetusLength.y : cathetusLength.x) / hypotenuse;
+	let radianAlfa: number = Math.asin(quadrantSinAlfa);
+
+	if (!rightQuadrants) {
+		radianAlfa += Math.PI / 2;
+	}
+	if (!topQuadrants) {
+		radianAlfa = 2 * Math.PI - radianAlfa;
+	}
+
+	const sinA: number = Math.sin(radianAlfa);
+	const cosA: number = Math.cos(radianAlfa);
+	const matrix: number[] = [
+		cosA,       // a
+		sinA,       // b
+		-sinA,      // c
+		cosA,       // d
+		outPoint.x, // e
+		outPoint.y  // f
+	];
+
+	return {
+		matrix,
+		length: hypotenuse
+	}
+}
 
 export function calcNodeMatrix(point: Point): number[] {
 	return [1, 0, 0, 1, point.x, point.y];
