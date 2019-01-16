@@ -1,0 +1,6 @@
+.canvas {
+	height: 75vh;
+	width: 100%;
+
+	vector-effect: non-scaling-stroke;
+}
