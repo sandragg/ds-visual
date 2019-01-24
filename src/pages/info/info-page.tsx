@@ -9,12 +9,12 @@ import { ROUTES } from 'src/services/routes';
 import './info-page.css';
 import arrow from 'src/assets/images/arrow.svg';
 
-export const InfoPage = () => {
+export const InfoPage = ({ match }) => {
     const [ structure, setStructure ] = useState<Structure | null>(null);
 
 	useEffect(() => {
 		StructureModel
-                .getOne(3, true)
+                .getOne(Number(match && match.params.id), true)
                 .then(struct => setStructure(struct));
     }, []);
 
