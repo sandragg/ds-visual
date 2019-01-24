@@ -13,7 +13,7 @@ export const GalleryPage = () => {
 
 	useEffect(() => {
 		StructureModel
-				.getList()
+				.getList(false)
 				.then(list => setStructureList(list));
 	}, []);
 
@@ -27,7 +27,7 @@ export const GalleryPage = () => {
 						picPath={struct.src}
 						picCaption={struct.title}
 					>
-						{struct.description}
+						{struct.description[0]}
 					</InfoCard>
 				))}
 			</CardList>
