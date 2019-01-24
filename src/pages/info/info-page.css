@@ -12,15 +12,19 @@
 	font-size: 24px;
 }
 
-.info__title__container {
-	display: flex;
-	align-items: center;
-}
-
 .info__title {
 	font-size: 36px;
 	font-weight: 600;
 	color: #34224B;
 	
 	margin-left: 15px;
+}
+
+.flex__container {
+	display: flex;
+	align-items: center;
+}
+
+.pictures {
+	justify-content: space-around;
 }
