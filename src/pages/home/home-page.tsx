@@ -26,7 +26,7 @@ export const HomePage = () => {
 
 	useEffect(() => {
 		StructureModel
-			.getList()
+			.getList(false)
 			.then(list => setStructureList(list));
 	}, []);
 
