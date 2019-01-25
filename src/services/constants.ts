@@ -1,4 +1,14 @@
 /**
+ * Tracked actions.
+ */
+export const TRACKED_ACTIONS = {
+	'DEFAULT': 'default',
+	'SELECT': 'active',
+	'INSERT': 'inserted',
+	'REMOVE': 'removed'
+};
+
+/**
  * Node component options (size, offset etc.).
  */
 export const NODE_OPTIONS = {
