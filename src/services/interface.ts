@@ -22,3 +22,8 @@ export interface PromiseDefer {
 	resolve: CallbackFunction,
 	reject: CallbackFunction
 }
+
+// @ts-ignore TODO how to fix????
+export type TrackedClassItem = PropertyKey | [PropertyKey, TrackedItemOption];
+// @ts-ignore
+export type TrackedItemOption = string | TrackedClassItem[];
