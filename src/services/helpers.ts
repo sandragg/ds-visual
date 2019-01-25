@@ -2,17 +2,62 @@ import {
 	ArrowParams,
 	Point,
 	CallbackFunction,
-	PromiseDefer
+	PromiseDefer,
+	AnimatedNode,
+	PromiseStatus
 } from './interface';
+import {
+	PROMISE_STATUSES
+} from './constants';
 
-/* Defer Promise */
+/**
+ * Wrapper extends the promise with the current status property.
+ * @param promise
+ */
+export function StatusPromise(promise: Promise<any>): PromiseStatus<any> {
+	const extended: any = promise;
+	extended.status = PROMISE_STATUSES.PENDING;
+	extended.then(() => extended.status = PROMISE_STATUSES.RESOLVED)
+			.catch(() => extended.status = PROMISE_STATUSES.REJECTED);
+
+	return extended;
+}
+
+/**
+ *  Create a deferred promise.
+ */
 export function defer(): PromiseDefer {
 	const deferred: any = {};
 
-	deferred.promise = new Promise((resolve: CallbackFunction, reject: CallbackFunction) => {
-		deferred.resolve = resolve;
-		deferred.reject = reject;
-	});
+	deferred.promise = new Promise(
+	(resolve: CallbackFunction, reject: CallbackFunction) => {
+			deferred.resolve = resolve;
+			deferred.reject = reject;
+		}
+	);
+
+	return deferred;
+}
+
+/**
+ * Animate queue nodes consistently.
+ * @param queue
+ */
+export function animateQueue(queue: AnimatedNode[]): PromiseDefer {
+	const deferred: any = defer();
+	deferred.promise = StatusPromise(deferred.promise);
+
+	const queuePromise: Promise<any> = new Promise(
+			async (resolve: CallbackFunction, reject: CallbackFunction) => {
+			for (const { ref, animationAttrs } of queue) {
+				if (deferred.promise.status === PROMISE_STATUSES.REJECTED) {
+					reject();
+				}
+				ref.current && await ref.current.animate(animationAttrs);
+			}
+			deferred.resolve();
+		}
+	);
 
 	return deferred;
 }

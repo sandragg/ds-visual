@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export interface Structure {
 	id: number,
 	src: string,
@@ -23,7 +25,16 @@ export interface PromiseDefer {
 	reject: CallbackFunction
 }
 
+export interface PromiseStatus<P> extends Promise<P> {
+	status: string
+}
+
 // @ts-ignore TODO how to fix????
 export type TrackedClassItem = PropertyKey | [PropertyKey, TrackedItemOption];
 // @ts-ignore
 export type TrackedItemOption = string | TrackedClassItem[];
+
+export interface AnimatedNode {
+	ref: RefObject<HTMLElement>,
+	animationAttrs: any
+}

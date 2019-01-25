@@ -16,3 +16,12 @@ export const NODE_OPTIONS = {
 	HEIGHT: 30,
 	MARGIN: 10
 };
+
+/**
+ * Promise statuses.
+ */
+export const PROMISE_STATUSES = {
+	PENDING: 'pending',
+	RESOLVED: 'resolved',
+	REJECTED: 'rejected'
+};
