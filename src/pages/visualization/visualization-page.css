@@ -1,0 +1,26 @@
+.visualization-section {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 100vw;
+	max-width: 2000px;
+	min-height: calc(85vh - var(--header-height));
+
+	margin: var(--header-height) auto 0;
+
+	background: #fff;
+}
+
+.toolbar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+
+	height: 15vh;
+	width: 100%;
+
+	margin: 0;
+
+	background: #20093C;
+}
