@@ -10,7 +10,7 @@ import { TrackedClassItem, TrackedItemOption } from './interface';
  */
 export function bindTracker(thisArg: any,
                             trackedItems: TrackedClassItem[],
-                            handlerCb: Function): any {
+                            handlerCb: (res: any, opt: TrackedItemOption) => void): any {
 	/**
 	 * If tracked list is missing or empty, or handler callback
 	 * isn't a function, then the binding is unnecessary.

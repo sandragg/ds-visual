@@ -7,6 +7,7 @@ import {
 	PromiseStatus
 } from './interface';
 import {
+	NODE_OPTIONS,
 	PROMISE_STATUSES
 } from './constants';
 
@@ -103,7 +104,7 @@ export function calcArrowMatrix(outPoint: Point, inPoint: Point): ArrowParams {
 }
 
 export function calcNodeMatrix(point: Point): number[] {
-	return [1, 0, 0, 1, point.x, point.y];
+	return [1, 0, 0, 1, point.x || 0, point.y || 0];
 }
 
 export function calcTransformValue(attrs: any): string {
@@ -118,4 +119,25 @@ export function calcTransformValue(attrs: any): string {
 	});
 
 	return transformValue;
+}
+
+/**
+ * Calculate node center point.
+ * @param x Node top left corner
+ * @param y Node top left corner
+ */
+export function getNodeCenterPoint({ x, y }: Point): Point {
+	return {
+		x: x + NODE_OPTIONS.WIDTH / 2,
+		y: y + NODE_OPTIONS.HEIGHT / 2
+	}
+}
+
+/**
+ * Get element from passed container by id.
+ * @param container
+ * @param id
+ */
+export function getById(container: any[], id: number): any {
+	return container.find(elem => elem.id === id);
 }
