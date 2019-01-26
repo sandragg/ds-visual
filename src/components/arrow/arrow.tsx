@@ -1,41 +1,48 @@
 import React, {
 	useMemo,
-	RefObject
+	RefObject,
+	HTMLAttributes,
+	SVGAttributes
 } from 'react';
 import { calcArrowMatrix } from 'src/services/helpers';
 import { Point, ArrowParams } from 'src/services/interface';
 
-interface Props {
-	nodeRef?: RefObject<any>,
-	attrs?: any,
+interface Props extends HTMLAttributes<HTMLElement> {
+	nodeRef?: RefObject<SVGPathElement>,
+	attrs?: SVGAttributes<SVGElement>
 	outPoint: Point,
 	inPoint: Point
 }
 
-const Arrow = ({ nodeRef, attrs, outPoint, inPoint }: Props) => {
+const ARROW_TAIL_OPTIONS = {
+	WIDTH: 8,
+	HEIGHT: 8
+};
+
+export const Arrow = ({ nodeRef, attrs, outPoint, inPoint }: Props) => {
+	const { transform, ...props } = attrs;
 	const { matrix, length }: ArrowParams = useMemo(
-			() => calcArrowMatrix(outPoint, inPoint),
-			[outPoint, inPoint]
+	() => calcArrowMatrix(outPoint, inPoint),
+	[outPoint, inPoint]
 	);
-	const tailsCenter = length * 0.55;
+	const tailsCenter = (length + ARROW_TAIL_OPTIONS.WIDTH) / 2;
 
 	return (
 		<path
 			ref={nodeRef}
 			className="arrow"
-			transform={`matrix(${matrix})`}
+			transform={transform || `matrix(${matrix})`}
 			d={`
 	      M 0 0
 	      H ${tailsCenter}
 	      M ${tailsCenter} 0
-	      L ${tailsCenter - 10} 5
-	      C ${tailsCenter - 7} 3 ${tailsCenter - 7} -3 ${tailsCenter - 10} -5
+	      L ${tailsCenter - ARROW_TAIL_OPTIONS.HEIGHT} ${ARROW_TAIL_OPTIONS.WIDTH / 2}
+	      L ${tailsCenter - 6} 0
+	      L ${tailsCenter - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
 	      L ${tailsCenter} 0
 	      H ${length}
       `}
-			{...attrs}
+			{...props}
 		/>
 	)
 };
-
-export { Arrow };

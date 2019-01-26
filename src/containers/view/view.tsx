@@ -18,7 +18,7 @@ import {
 	arrowAnimationStates,
 	nodeAnimationStates
 } from 'src/services/animation-style';
-import { Node as NodeView } from 'src/components/node';
+import { Node } from 'src/components/node';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
 
@@ -196,7 +196,7 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 							}
 						}}
 				>
-					<NodeView>{node.value}</NodeView>
+					<Node>{node.value}</Node>
 				</Animated>
 		))
 	}

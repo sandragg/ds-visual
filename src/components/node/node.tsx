@@ -1,26 +1,28 @@
 import React, {
 	useMemo,
-	RefObject
+	RefObject,
+	HTMLAttributes,
+	SVGAttributes
 } from 'react';
 import './node.css';
 import { calcTransformValue, calcNodeMatrix } from 'src/services/helpers';
 import { NODE_OPTIONS } from 'src/services/constants';
+import { Point } from 'src/services/interface';
 
-interface Props {
-	children: any,
-	nodeRef?: RefObject<any>,
-	attrs?: any
+interface Props extends HTMLAttributes<HTMLElement> {
+	nodeRef?: RefObject<SVGGElement>,
+	attrs?: SVGAttributes<SVGElement>
 }
 
-const nodeCenterPoint = {
+const nodeCenterPoint: Point = {
 	x: NODE_OPTIONS.WIDTH / 2,
 	y: NODE_OPTIONS.HEIGHT / 2
 };
 
 export const Node = ({ children, nodeRef, attrs }: Props) => {
 	const matrix: number[] = useMemo(
-			() => calcNodeMatrix({ x: attrs.x, y: attrs.y }),
-			[attrs.x, attrs.y]
+	() => calcNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
+	[attrs.x, attrs.y]
 	);
 	const transformValue: string = calcTransformValue(attrs);
 

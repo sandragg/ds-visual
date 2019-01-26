@@ -1,18 +1,15 @@
-import React, { CSSProperties } from 'react';
+import React, { HTMLAttributes } from 'react';
 import './button.css';
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLElement> {
 	theme: string,
-	children: string,
-	style?: CSSProperties,
 	disabled?: boolean
 }
 
-const Button = ({ theme, children, style, disabled }: Props) => (
+const Button = ({ theme, children, ...props }: Props) => (
 		<button
 			className={`button button_${theme}`}
-			style={style}
-			disabled={disabled}
+			{...props}
 		>
 			{children}
 		</button>

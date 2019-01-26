@@ -14,7 +14,7 @@ export const TRACKED_ACTIONS = {
 export const NODE_OPTIONS = {
 	WIDTH: 40,
 	HEIGHT: 30,
-	MARGIN: 10
+	MARGIN: 15
 };
 
 /**
