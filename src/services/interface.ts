@@ -10,6 +10,7 @@ export interface Structure {
 }
 
 export type CallbackFunction = () => void;
+export type IFunction = (...args: any[]) => any;
 
 export interface Point {
 	x: number,

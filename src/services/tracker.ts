@@ -1,46 +1,47 @@
-import { TrackedClassItem, TrackedItemOption } from './interface';
+import {
+	IFunction,
+	TrackedClassItem,
+	TrackedItemOption
+} from './interface';
+
+type ProxyApplyHandler = ProxyHandler<IFunction>['apply'];
+type ProxyConstructHandler = ProxyHandler<IFunction>['construct'];
 
 /**
- * Wrap accepted class instance and provide Proxy tracking for certain properties and methods.
+ * Proxy wrappers provide tracking for certain properties and methods.
  * @param thisArg Class instance
  * @param trackedItems Class properties and methods that should be tracked
- * @param handlerCb Handler callback is used for any outside logic.
- *        Callback accepts current operation result as the first argument
- *        and extra tracking options as the second.
+ * @param handler Handler is used for any outside logic.
+ *        Callback accepts current operation result, tracking options
+ *        and previous result or passed arguments.
  */
-export function bindTracker(thisArg: any,
-                            trackedItems: TrackedClassItem[],
-                            handlerCb: (res: any, opt: TrackedItemOption) => void): any {
-	/**
-	 * If tracked list is missing or empty, or handler callback
-	 * isn't a function, then the binding is unnecessary.
-	 */
-	if (!trackedItems
-			|| !trackedItems.length
-			|| typeof handlerCb !== 'function') {
+export function bindTracker<M>(thisArg: M,
+                                      trackedItems: TrackedClassItem[],
+                                      handler: (res: any, args: any, opt?: TrackedItemOption) => void): M {
+	/* The binding is unnecessary if handler isn't a function. */
+	if (typeof handler !== 'function') {
 		return thisArg;
 	}
-	/* Common Proxy for tracking object(instance) properties. */
-	thisArg = new Proxy(
-			thisArg,
-			{
-				get(target: object, p: PropertyKey): any {
-					const res: any = Reflect.get(target, p);
-					const trackedItem: TrackedClassItem | undefined =
-							getTrackedPropByName(target, trackedItems, p);
+	/* Proxy handlers: apply - function call, construct - create new instance. */
+	const applyHandler: (opt: TrackedItemOption) => ProxyApplyHandler =
+			opt =>
+			(target: IFunction, thisArg: M, argArray?: any): any => {
+				const res: any = Reflect.apply(target, thisArg, argArray);
+				handler(res, argArray, opt);
+				return res;
+			};
+	const constructHandler: (opt: TrackedItemOption) => ProxyConstructHandler =
+			opt =>
+			(target: IFunction, argArray?: any): object => {
+				let res: any = Reflect.construct(target, argArray);
+				res = bindTracker(res, opt, handler);
+				return res;
+			};
 
-					if (trackedItem) {
-						handlerCb(res, Array.isArray(trackedItem) && trackedItem[1]);
-					}
-
-					return res;
-				}
-			}
-	);
-	/* Proxy wrapper on every tracked method. */
+	/* Set Proxy wrapper on every tracked item. */
 	trackedItems.forEach(item => {
 		let itemName: PropertyKey;
-		let opt: TrackedItemOption | undefined;
+		let opt: TrackedItemOption;
 		if (Array.isArray(item)) {
 			[ itemName, opt ] = item;
 		}
@@ -48,41 +49,34 @@ export function bindTracker(thisArg: any,
 			itemName = item;
 		}
 
-		const classProp: any = thisArg[itemName];
-		if (typeof classProp !== 'function') {
+		const classProp: keyof M = thisArg[itemName];
+		const apply: ProxyApplyHandler = applyHandler(opt);
+		const construct: ProxyConstructHandler = constructHandler(opt);
+		/* Construct handler is used for binding internal classes. */
+		if (typeof classProp === 'function') {
+			thisArg[itemName] = new Proxy(classProp, { apply, construct });
 			return;
 		}
-		/* Construct handler is used for binding internal classes. */
-		thisArg[itemName] = new Proxy(
-				classProp,
-				{
-					apply(target: Function, thisArg: any, argArray?: any): any {
+
+		const propDesc: PropertyDescriptor = Object.getOwnPropertyDescriptor(
+				thisArg,
+				itemName
+		);
+		const { get, set } = propDesc;
+		/* For properties set Proxy wrapper on getter/setter. */
+		Object.defineProperty(thisArg, itemName, {
+				...propDesc,
+				get: get && new Proxy(get, { apply }),
+				set: set && new Proxy(set, {
+					apply(target: IFunction, thisArg: object, argArray?: any): any {
+						const prev: any = Reflect.get(thisArg, itemName);
 						const res: any = Reflect.apply(target, thisArg, argArray);
-						handlerCb(res, opt);
-						return res;
-					},
-					construct(target: Function, argArray?: any): object {
-						let res: any = Reflect.construct(target, argArray);
-						res = bindTracker(res, opt, handlerCb);
+						handler(res, prev, opt);
 						return res;
 					}
-				}
-		);
+				})
+		});
 	});
 
 	return thisArg;
-}
-
-/**
- * Return TrackedClassItem if the class item with the passed name(key)
- * isn't a method and is in a tracked list, else - undefined.
- * @param target Class instance
- * @param trackedItems Class properties and methods that should be tracked
- * @param itemName Property key
- */
-function getTrackedPropByName(target: object,
-                              trackedItems: TrackedClassItem[],
-                              itemName: PropertyKey): TrackedClassItem {
-	return typeof target[itemName] !== 'function'
-			&& trackedItems.find(item => item[0] === itemName);
 }
