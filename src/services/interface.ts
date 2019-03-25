@@ -1,5 +1,13 @@
-import { RefObject, ComponentType, ReactNode } from 'react';
-import { Direction, FieldType } from 'src/services/constants';
+import {
+	RefObject,
+	ComponentType,
+	ReactNode
+} from 'react';
+import {
+	Direction,
+	FieldType,
+	TrackedActions
+} from 'src/services/constants';
 import { PlainObject } from 'react-move/core';
 
 export interface Structure {
@@ -90,4 +98,27 @@ export interface NodeProps {
 	nodeRef?: RefObject<SVGGElement>,
 	attrs?: PlainObject,
 	children: ReactNode[]
+}
+
+// TODO add iterator ?!
+export interface History {
+	history: HistoryStep[],
+	animationHistory: AnimationHistoryStep[]
+	push: (step: HistoryStep) => void,
+	top: () => HistoryStep,
+	reset: () => void,
+	buildAnimationHistory: (vm: ViewModel<any>, cb: CallbackFunction) => void,
+}
+
+export interface HistoryStep {
+	result: any,
+	attrs: any[],
+	opts?: TrackedItemOption
+}
+
+export interface AnimationHistoryStep {
+	refs: Array<RefObject<HTMLElement>>,
+	attrs: object,
+	action?: TrackedActions,
+	previousState?: number | null
 }

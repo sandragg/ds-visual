@@ -1,12 +1,13 @@
 /**
  * Tracked actions.
  */
-export const TRACKED_ACTIONS = {
-	'DEFAULT': 'default',
-	'SELECT': 'active',
-	'INSERT': 'inserted',
-	'REMOVE': 'removed'
-};
+export const enum TrackedActions {
+	'default',
+	'select',
+	'new',
+	'delete',
+	'change'
+}
 /**
  * Promise statuses.
  */
