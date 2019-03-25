@@ -3,7 +3,7 @@ import {
 	FieldHeight,
 	FieldWidth,
 	FieldType
-} from 'src/services/node-factory';
+} from 'src/services/constants';
 import { calcNodeMatrix } from 'src/services/helpers';
 
 export const ValueField = ({ children, attrs }) => {

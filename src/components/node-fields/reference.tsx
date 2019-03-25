@@ -3,7 +3,7 @@ import {
 	FieldHeight,
 	FieldWidth,
 	FieldType
-} from 'src/services/node-factory';
+} from 'src/services/constants';
 
 export const RefField = ({ attrs }) => (
 	<rect
