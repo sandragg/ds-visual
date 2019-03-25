@@ -7,16 +7,6 @@ export const TRACKED_ACTIONS = {
 	'INSERT': 'inserted',
 	'REMOVE': 'removed'
 };
-
-/**
- * Node component options (size, offset etc.).
- */
-export const NODE_OPTIONS = {
-	WIDTH: 40,
-	HEIGHT: 30,
-	MARGIN: 15
-};
-
 /**
  * Promise statuses.
  */
@@ -24,4 +14,21 @@ export const PROMISE_STATUSES = {
 	PENDING: 'pending',
 	RESOLVED: 'resolved',
 	REJECTED: 'rejected'
+};
+
+export const enum Direction {
+	'vertical',
+	'horizontal'
+}
+
+export const enum FieldType {
+	'value',
+	'ref'
+}
+
+export const FieldHeight = 30;
+
+export const FieldWidth = {
+	[FieldType.value]: 40,
+	[FieldType.ref]: 20
 };
