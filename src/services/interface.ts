@@ -1,4 +1,6 @@
-import { RefObject } from 'react';
+import { RefObject, ComponentType, ReactNode } from 'react';
+import { Direction, FieldType } from 'src/services/constants';
+import { PlainObject } from 'react-move/core';
 
 export interface Structure {
 	id: number,
@@ -73,4 +75,19 @@ export interface InitialState<M, VType> {
 export interface ModelAction {
 	name: string,
 	method: string
+}
+
+// TODO add getFieldCoords method
+export interface NodeFactory {
+	direction: Direction,
+	fields: FieldType[],
+	width: number,
+	height: number,
+	component: ComponentType
+}
+
+export interface NodeProps {
+	nodeRef?: RefObject<SVGGElement>,
+	attrs?: PlainObject,
+	children: ReactNode[]
 }

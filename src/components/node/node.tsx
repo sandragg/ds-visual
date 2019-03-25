@@ -1,22 +1,12 @@
-import React, {
-	useMemo,
-	RefObject,
-	ReactNode
-} from 'react';
+import React, { useMemo } from 'react';
 import {
 	calcTransformValue,
 	calcNodeMatrix
 } from 'src/services/helpers';
-import { PlainObject } from 'react-move/core';
+import { NodeProps } from 'src/services/interface';
 import './node.css';
 
-interface Props {
-	nodeRef?: RefObject<SVGGElement>,
-	attrs?: PlainObject,
-	children: ReactNode[]
-}
-
-export const Node = ({ children, nodeRef, attrs }: Props) => {
+export const Node = ({ children, nodeRef, attrs }: NodeProps) => {
 	const matrix: number[] = useMemo(
 	() => calcNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
 	[attrs.x, attrs.y]
