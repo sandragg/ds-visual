@@ -122,3 +122,8 @@ export interface AnimationHistoryStep {
 	action?: TrackedActions,
 	previousState?: number | null
 }
+
+export interface VMC {
+	build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): void,
+	render(): void
+}
