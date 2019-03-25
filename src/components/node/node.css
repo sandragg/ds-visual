@@ -1,9 +1,11 @@
 .node {
 	user-select: none;
-	fill: peachpuff;
 }
 
 .node__figure {
+	fill: antiquewhite;
+	stroke: #1C053A;
+	stroke-width: 1px;
 }
 
 .node__caption {
