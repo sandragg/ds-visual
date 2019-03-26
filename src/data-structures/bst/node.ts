@@ -1,4 +1,4 @@
-import { TRACKED_ACTIONS } from 'src/services/constants';
+import { TrackedActions } from 'src/services/constants';
 import { TrackedClassItem } from 'src/services/interface';
 import { NodeRef } from './bst.interface';
 
@@ -62,6 +62,6 @@ export class Node<VType> {
  * Array stores pairs [tracked_item, action_type] for the route history tracking.
  */
 export const NodeTrackedItems: TrackedClassItem[] = [
-	['left', TRACKED_ACTIONS.SELECT],
-	['right', TRACKED_ACTIONS.SELECT]
+	['left', TrackedActions.select],
+	['right', TrackedActions.select]
 ];

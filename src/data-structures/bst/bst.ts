@@ -1,4 +1,4 @@
-import { TRACKED_ACTIONS } from 'src/services/constants';
+import { TrackedActions } from 'src/services/constants';
 import { TrackedClassItem } from 'src/services/interface';
 import { Node, NodeTrackedItems } from './node';
 import { NodeRef } from './bst.interface';
@@ -98,7 +98,7 @@ export class BST<VType> {
  * Array stores pairs [tracked_item, action_type] for the route history tracking.
  */
 export const BstTrackedItems: TrackedClassItem[] = [
-	['getRoot', TRACKED_ACTIONS.SELECT],
-	['_addLeaf', TRACKED_ACTIONS.INSERT],
+	['getRoot', TrackedActions.select],
+	['_addLeaf', TrackedActions.new],
 	['Node', NodeTrackedItems]
 ];
