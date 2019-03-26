@@ -1,8 +1,8 @@
 import React, {
-	useImperativeMethods,
 	useState,
 	forwardRef,
 	useRef,
+	useImperativeHandle,
 	RefObject
 } from 'react';
 import Animate from 'react-move/Animate';
@@ -20,7 +20,7 @@ const AnimatedComponent = (props: Props, ref: RefObject<object>) => {
 	const promiseDefer = useRef<PromiseDefer | null>(null);
 	const currentAnimAttrs = useCurrentAnimAttrs(externalAnimAttrs, internalAnimAttrs);
 
-	useImperativeMethods(ref, () => ({
+	useImperativeHandle(ref, () => ({
 		node: ref.current,
 		animate: (newAnimAttrs: any): Promise<any> => {
 			promiseDefer.current = defer();
