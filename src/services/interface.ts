@@ -129,6 +129,14 @@ export interface VMC {
 	render(): void
 }
 
+export interface AC {
+	history: ControllerHistory,
+	toggleHistoryStatus(): void,
+	build(handler: (traces: History) => void): void,
+	start(): void
+	// + methods to change animation steps
+}
+
 export interface ADTView<M, VType> {
 	state: ViewModel<VType>,
 	viewModel: ViewModel<VType>,
