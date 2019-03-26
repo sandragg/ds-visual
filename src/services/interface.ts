@@ -127,3 +127,15 @@ export interface VMC {
 	build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): void,
 	render(): void
 }
+
+export interface ADTView<M, VType> {
+	state: ViewModel<VType>,
+	viewModel: ViewModel<VType>,
+	buildViewModel(model: M): void,
+	applyViewModel(): void
+}
+
+export interface ControllerHistory {
+	traces: History,
+	isUpdating: boolean
+}

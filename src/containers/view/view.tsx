@@ -1,87 +1,47 @@
 import * as React from 'react';
 import {
-	Point,
-	InitialState,
 	ViewModel,
 	ArrowViewModel,
 	NodeViewModel,
-	AnimatedNode,
-	PromiseDefer, TrackedItemOption
+	ADTView
 } from 'src/services/interface';
 import {
 	calcArrowMatrix,
 	getNodeCenterPoint,
-	getById
+	getById,
 } from 'src/services/helpers';
-import { TRACKED_ACTIONS } from 'src/services/constants';
 import {
 	arrowAnimationStates,
 	nodeAnimationStates
 } from 'src/services/animation-style';
-import { Node } from 'src/components/node';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
+import { Component, ReactNode } from 'react';
+import { NodeFactory } from 'src/services/interface';
+import { TrackedActions } from 'src/services/constants';
 
 let idCounter: number = 1;
 
-export abstract class View<M, N, VType> extends React.Component<object, InitialState<M, VType>> {
+export abstract class View<M, VType>
+		extends Component<object, ViewModel<VType>>
+		implements ADTView<M, VType> {
 	/**
 	 * View component state.
 	 * @public
 	 */
-	public state: InitialState<M, VType> = null;
-	/**
-	 * Deferred promise for animations queue.
-	 * @protected
-	 */
-	protected animationsQueueDefer: PromiseDefer = null;
-	/**
-	 * Initial coordinates for structure view.
-	 * @protected
-	 * @readonly
-	 */
-	protected readonly INITIAL_COORDS: Point = null;
-	/**
-	 * Store route steps from structure traversal.
-	 * @protected
-	 */
-	protected routeHistory: any[] = [];
-	/**
-	 * Flag is true, if a structure model is updating now.
-	 * @protected
-	 */
-	protected isModelUpdating: boolean = false;
-	/**
-	 * Create View model instance and initialize state.
-	 * @protected
-	 * @constructor
-	 */
-	protected constructor(props) {
-		super(props);
-		this.state = this.getViewInitialState();
-	}
-	/**
-	 * Render structure view model.
-	 * @public
-	 */
+	public state: ViewModel<VType> = this.getViewInitialState();
+
+	public viewModel: ViewModel<VType>;
+
+	protected abstract Node: NodeFactory;
+
 	public render() {
 		return (
-				<g transform={`translate(${this.INITIAL_COORDS.x},${this.INITIAL_COORDS.y})`}>
+				<g transform={`translate(0,0)`}>
 					{...this.build()}
 				</g>
 		);
 	}
-	/**
-	 * Update view model when adding new node to the structure:
-	 * 1. update model
-	 * 2. build view model
-	 * 3. rerender tree with opacity:0 for new components && build animations queue
-	 * 4. after rerender play animations queue
-	 * @public
-	 * @abstract
-	 * @param value
-	 */
-	public abstract onInsertUpdate(value: VType);
 	/**
 	 * Build view model.
 	 * View model element stores ref on node, its coordinates, in/out arrows ids.
@@ -89,7 +49,8 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 	 * @abstract
 	 * @param model Structure model
 	 */
-	protected abstract buildViewModel(model: M): ViewModel<VType>;
+	public abstract buildViewModel(model: M): void;
+	public abstract applyViewModel(): void;
 	/**
 	 * Build Node view model.
 	 * @protected
@@ -98,7 +59,7 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 	 * @param parentVM Previous node view model
 	 * @param opt Extra options for calculation
 	 */
-	protected abstract buildNodeViewModel(nodeM: N,
+	protected abstract buildNodeViewModel(nodeM: any,
 	                                      parentVM: NodeViewModel<VType>,
 	                                      opt: any): NodeViewModel<VType>;
 	/**
@@ -138,14 +99,14 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 	 *         result[0] - Array of Animated Arrow components
 	 *         result[1] - Array of Animated Node components
 	 */
-	protected build(): JSX.Element[][] {
-		const { arrows, nodes } = this.state.viewModel;
-
-		return [
-			this.buildArrowComponents(arrows),
-			this.buildNodeComponents(nodes)
-		];
-	}
+	protected abstract build(): ReactNode[];
+	// 	const { arrows, nodes } = this.state;
+	//
+	// 	return [
+	// 		this.buildArrowComponents(arrows),
+	// 		this.buildNodeComponents(nodes)
+	// 	];
+	// }
 	/**
 	 * Build array of Animated Arrow components.
 	 * @protected
@@ -163,7 +124,7 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 								transform: `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`
 							},
 							update: {
-								...arrowAnimationStates[TRACKED_ACTIONS.DEFAULT],
+								...arrowAnimationStates[TrackedActions.default],
 								transform: [`matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`]
 							}
 						}}
@@ -190,13 +151,13 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 								y: node.coords.y
 							},
 							update: {
-								...nodeAnimationStates[TRACKED_ACTIONS.DEFAULT],
+								...nodeAnimationStates[TrackedActions.default],
 								x: [node.coords.x],
 								y: [node.coords.y]
 							}
 						}}
 				>
-					<Node>{node.value}</Node>
+					<this.Node.component>{node.value}</this.Node.component>
 				</Animated>
 		))
 	}
@@ -205,43 +166,43 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 	 * @protected
 	 * @param viewModel
 	 */
-	protected buildAnimationHistory(viewModel: ViewModel<VType>): AnimatedNode[] {
-		const routeHistory = this.routeHistory;
-		this.routeHistory = [];
-
-		// TODO please, come up with a better idea
-		return routeHistory.reduce((hist, step, index) => {
-			const prevStep = index && routeHistory[index - 1];
-			const commonArrow: ArrowViewModel = prevStep && this.getCommonArrow(viewModel, prevStep[0].id, step[0].id);
-			const isSelectAction: boolean = step[1] === TRACKED_ACTIONS.SELECT;
-
-			if (hist.length
-					&& prevStep[0].id === step[0].id
-					&& (prevStep[1] === step[1]
-							|| prevStep[1] !== TRACKED_ACTIONS.SELECT)) {
-				return hist;
-			}
-
-			if (isSelectAction && commonArrow) {
-				hist.push({
-					ref: commonArrow.ref,
-					animationAttrs: arrowAnimationStates[TRACKED_ACTIONS.SELECT]
-				});
-			}
-			hist.push({
-				ref: getById(viewModel.nodes, step[0].id).ref,
-				animationAttrs: nodeAnimationStates[step[1]]
-			});
-			if (!isSelectAction && commonArrow) {
-				hist.push({
-					ref: commonArrow.ref,
-					animationAttrs: arrowAnimationStates[TRACKED_ACTIONS.INSERT]
-				});
-			}
-
-			return hist;
-		}, []);
-	}
+	// protected buildAnimationHistory(viewModel: ViewModel<VType>): AnimatedNode[] {
+	// 	const routeHistory = this.routeHistory;
+	// 	this.routeHistory = [];
+	//
+	// 	// TODO please, come up with a better idea
+	// 	return routeHistory.reduce((hist, step, index) => {
+	// 		const prevStep = index && routeHistory[index - 1];
+	// 		const commonArrow: ArrowViewModel = prevStep && this.getCommonArrow(viewModel, prevStep[0].id, step[0].id);
+	// 		const isSelectAction: boolean = step[1] === TRACKED_ACTIONS.SELECT;
+	//
+	// 		if (hist.length
+	// 				&& prevStep[0].id === step[0].id
+	// 				&& (prevStep[1] === step[1]
+	// 						|| prevStep[1] !== TRACKED_ACTIONS.SELECT)) {
+	// 			return hist;
+	// 		}
+	//
+	// 		if (isSelectAction && commonArrow) {
+	// 			hist.push({
+	// 				ref: commonArrow.ref,
+	// 				animationAttrs: arrowAnimationStates[TRACKED_ACTIONS.SELECT]
+	// 			});
+	// 		}
+	// 		hist.push({
+	// 			ref: getById(viewModel.nodes, step[0].id).ref,
+	// 			animationAttrs: nodeAnimationStates[step[1]]
+	// 		});
+	// 		if (!isSelectAction && commonArrow) {
+	// 			hist.push({
+	// 				ref: commonArrow.ref,
+	// 				animationAttrs: arrowAnimationStates[TRACKED_ACTIONS.INSERT]
+	// 			});
+	// 		}
+	//
+	// 		return hist;
+	// 	}, []);
+	// }
 	/**
 	 * Get common arrow view model between two nodes.
 	 * @protected
@@ -266,27 +227,13 @@ export abstract class View<M, N, VType> extends React.Component<object, InitialS
 		return null;
 	}
 	/**
-	 * Callback for bindTracker.
-	 * @protected
-	 * @param res Operation result
-	 * @param opt Extra tracking options
-	 */
-	protected onTrackedAction(res: any, opt: TrackedItemOption) {
-		if (res != null && this.isModelUpdating) {
-			this.routeHistory.push([res, opt]);
-		}
-	}
-	/**
 	 * Get View component initial state.
 	 * @protected
 	 */
-	protected getViewInitialState(): InitialState<M, VType> {
+	protected getViewInitialState(): ViewModel<VType> {
 		return {
-			model: null,
-			viewModel: {
 				nodes: [],
 				arrows: []
-			}
 		}
 	}
 }

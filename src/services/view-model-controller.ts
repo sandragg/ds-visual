@@ -1,7 +1,6 @@
-import { IView } from 'src/containers/view/view';
-import { CallbackFunction, VMC } from 'src/services/interface';
+import { ADTView, CallbackFunction, VMC } from 'src/services/interface';
 
-export class ViewModelController<M, V extends IView<M, any>> implements VMC {
+export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 	private readonly model: M;
 	private readonly view: V;
 
