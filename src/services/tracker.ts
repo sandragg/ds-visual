@@ -16,8 +16,8 @@ type ProxyConstructHandler = ProxyHandler<IFunction>['construct'];
  *        and previous result or passed arguments.
  */
 export function bindTracker<M>(thisArg: M,
-                                      trackedItems: TrackedClassItem[],
-                                      handler: (res: any, args: any, opt?: TrackedItemOption) => void): M {
+                               trackedItems: TrackedClassItem[],
+                               handler: (res: any, args: any[], opt?: TrackedItemOption) => void): M {
 	/* The binding is unnecessary if handler isn't a function. */
 	if (typeof handler !== 'function') {
 		return thisArg;
@@ -71,7 +71,7 @@ export function bindTracker<M>(thisArg: M,
 					apply(target: IFunction, thisArg: object, argArray?: any): any {
 						const prev: any = Reflect.get(thisArg, itemName);
 						const res: any = Reflect.apply(target, thisArg, argArray);
-						handler(res, prev, opt);
+						handler(res, [prev], opt);
 						return res;
 					}
 				})
