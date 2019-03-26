@@ -104,10 +104,10 @@ export interface NodeProps {
 export interface History {
 	history: HistoryStep[],
 	animationHistory: AnimationHistoryStep[]
-	push: (step: HistoryStep) => void,
-	top: () => HistoryStep,
-	reset: () => void,
-	buildAnimationHistory: (vm: ViewModel<any>, cb: CallbackFunction) => void,
+	push(step: HistoryStep): void,
+	top(): HistoryStep,
+	reset(): void,
+	buildAnimationHistory(vm: ViewModel<any>, cb: CallbackFunction): void,
 }
 
 export interface HistoryStep {

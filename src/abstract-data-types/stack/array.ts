@@ -1,7 +1,8 @@
 import { TrackedClassItem } from 'src/services/interface';
-import { TRACKED_ACTIONS } from 'src/services/constants';
+import { TrackedActions } from 'src/services/constants';
 
 export class Stack<VType> implements ADTStack<VType> {
+
 	public static OUT_OF_DOMAIN: number = -1;
 	private static STACK_SIZE: number = 20;
 
@@ -55,5 +56,5 @@ export class Stack<VType> implements ADTStack<VType> {
 }
 
 export const StackTrackedItems: TrackedClassItem[] = [
-	['up', TRACKED_ACTIONS.SELECT]
+	['up', TrackedActions.select]
 ];
