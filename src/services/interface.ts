@@ -82,7 +82,8 @@ export interface InitialState<M, VType> {
 
 export interface ModelAction {
 	name: string,
-	method: string
+	method: string,
+	handler: string
 }
 
 // TODO add getFieldCoords method
@@ -112,7 +113,7 @@ export interface History {
 
 export interface HistoryStep {
 	result: any,
-	attrs: any[],
+	attrs: object,
 	opts?: TrackedItemOption
 }
 
