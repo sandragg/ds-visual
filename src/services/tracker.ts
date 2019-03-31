@@ -17,13 +17,13 @@ type ProxyConstructHandler = ProxyHandler<IFunction>['construct'];
  */
 export function bindTracker<M>(thisArg: M,
                                trackedItems: TrackedClassItem[],
-                               handler: (res: any, args: any[], opt?: TrackedItemOption) => void): M {
+                               handler: (res: any, args: any[], opt: TrackedClassItem, prevRes?: any) => void): M {
 	/* The binding is unnecessary if handler isn't a function. */
 	if (typeof handler !== 'function') {
 		return thisArg;
 	}
 	/* Proxy handlers: apply - function call, construct - create new instance. */
-	const applyHandler: (opt: TrackedItemOption) => ProxyApplyHandler =
+	const applyHandler: (opt: TrackedClassItem) => ProxyApplyHandler =
 			opt =>
 			(target: IFunction, thisArg: M, argArray?: any): any => {
 				const res: any = Reflect.apply(target, thisArg, argArray);
@@ -50,11 +50,27 @@ export function bindTracker<M>(thisArg: M,
 		}
 
 		const classProp: keyof M = thisArg[itemName];
-		const apply: ProxyApplyHandler = applyHandler(opt);
+		const apply: ProxyApplyHandler = applyHandler(item);
 		const construct: ProxyConstructHandler = constructHandler(opt);
 		/* Construct handler is used for binding internal classes. */
 		if (typeof classProp === 'function') {
 			thisArg[itemName] = new Proxy(classProp, { apply, construct });
+			return;
+		}
+
+		if (typeof classProp === 'object') {
+			thisArg[itemName] = new Proxy(classProp, {
+				get(target: never, p: PropertyKey): any {
+					const res: any = Reflect.get(target, p);
+					handler(res, [p], item);
+					return res;
+				},
+				set(target: never, p: PropertyKey, value: any): boolean {
+					const prev: any = Reflect.get(target, p);
+					handler(value, [p, value], item, prev);
+					return Reflect.set(target, p, value);
+				}
+			});
 			return;
 		}
 
@@ -71,7 +87,7 @@ export function bindTracker<M>(thisArg: M,
 					apply(target: IFunction, thisArg: object, argArray?: any): any {
 						const prev: any = Reflect.get(thisArg, itemName);
 						const res: any = Reflect.apply(target, thisArg, argArray);
-						handler(res, [prev], opt);
+						handler(res, argArray, item, prev);
 						return res;
 					}
 				})

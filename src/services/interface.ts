@@ -45,7 +45,7 @@ export interface PromiseStatus<P> extends Promise<P> {
 // @ts-ignore TODO how to fix????
 export type TrackedClassItem = PropertyKey | [PropertyKey, TrackedItemOption];
 // @ts-ignore
-export type TrackedItemOption = string | TrackedClassItem[];
+export type TrackedItemOption = TrackedActions | TrackedClassItem[];
 
 export interface AnimatedNode {
 	ref: RefObject<HTMLElement>,
