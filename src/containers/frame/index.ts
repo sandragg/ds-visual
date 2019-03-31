@@ -1,1 +1,1 @@
-export { Frame, ViewFrame } from './frame';
+export { Frame } from './frame';

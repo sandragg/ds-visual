@@ -152,3 +152,10 @@ export interface ControllerHistory {
 	traces: History,
 	isUpdating: boolean
 }
+
+export interface ViewFrame<M, V extends ADTView<M, any>> {
+	ViewModelControl: VMC,
+	AnimationControl: AC,
+	view: V,
+	component: ComponentType
+}

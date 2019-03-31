@@ -1,11 +1,8 @@
-import React, {
-	ComponentType,
-	MutableRefObject
-} from 'react';
+import React, { MutableRefObject } from 'react';
 import {
-	AC,
-	VMC,
+	AC, VMC,
 	ADTView,
+	ViewFrame,
 	TrackedClassItem
 } from 'src/services/interface';
 import { Canvas } from 'src/components/canvas';
@@ -13,11 +10,7 @@ import { bindTracker } from 'src/services/tracker';
 import { ViewModelController } from 'src/services/view-model-controller';
 import { AnimationController } from 'src/services/animation-controller';
 
-interface ViewFrame<M, V> {
-	component: ComponentType
-}
-
-class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
+export class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
 
 	public ViewModelControl: VMC;
 	public AnimationControl: AC;
@@ -25,6 +18,10 @@ class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
 	private model: M;
 	private View: V;
 	private viewRef: MutableRefObject<V> = React.createRef();
+
+	get view() {
+		return this.viewRef.current;
+	}
 
 	constructor(Model: new () => M, trackedItems: TrackedClassItem[], View: any) {
 		this.AnimationControl = new AnimationController();
@@ -54,5 +51,3 @@ class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
 		);
 	}
 }
-
-export { Frame, ViewFrame };
