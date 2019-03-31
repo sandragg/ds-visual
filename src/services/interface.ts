@@ -128,8 +128,8 @@ export interface AnimationHistoryStep {
 }
 
 export interface VMC {
-	build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): void,
-	render(): void
+	build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): Promise<void>,
+	render(): Promise<void>
 }
 
 export interface AC {

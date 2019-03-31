@@ -9,16 +9,24 @@ export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 		this.view = view;
 	}
 	// TODO create condition to update the view
-	public build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): void {
-		const flag: any = this.updateModel(action, params, preUpdateCb);
-		// @ts-ignore
-		if (flag !== this.model.constructor.OUT_OF_DOMAIN) { // && method is mutable
-			this.updateView(postUpdateCb || preUpdateCb);
-		}
+	public build(action: string,
+               params: any[],
+               preUpdateCb?: CallbackFunction,
+               postUpdateCb?: CallbackFunction): Promise<void> {
+		return new Promise(resolve => {
+			const flag: any = this.updateModel(action, params, preUpdateCb);
+			// @ts-ignore
+			if (flag !== this.model.constructor.OUT_OF_DOMAIN) { // && method is mutable
+				this.updateView(postUpdateCb || preUpdateCb);
+			}
+			resolve();
+		});
 	}
 
-	public render(): void {
-		this.view.applyViewModel();
+	public render(): Promise<void> {
+		return new Promise(resolve => {
+			this.view.applyViewModel(resolve);
+		});
 	}
 
 	private updateModel(action: string, params: any[], cb?: CallbackFunction): any {
