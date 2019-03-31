@@ -1,20 +1,20 @@
-import { TRACKED_ACTIONS } from './constants';
+import { TrackedActions } from './constants';
 
 export const arrowAnimationStates = {
-	[TRACKED_ACTIONS.DEFAULT]: {
+	[TrackedActions.default]: {
 		fill: ['black'],
 		stroke: ['black'],
 		scale: [1],
 		opacity: [1]
 	},
-	[TRACKED_ACTIONS.SELECT]: [
+	[TrackedActions.select]: [
 		{
 			fill: ['#b9deff'],
 			stroke: ['#b9deff'],
 			timing: { duration: 200 }
 		}
 	],
-	[TRACKED_ACTIONS.INSERT]: [
+	[TrackedActions.new]: [
 		{
 			fill: ['#b9ffda'],
 			stroke: ['#b9ffda'],
@@ -25,18 +25,18 @@ export const arrowAnimationStates = {
 };
 
 export const nodeAnimationStates = {
-	[TRACKED_ACTIONS.DEFAULT]: {
+	[TrackedActions.default]: {
 		fill: ['peachpuff'],
 		scale: [1],
 		opacity: [1]
 	},
-	[TRACKED_ACTIONS.SELECT]: [
+	[TrackedActions.select]: [
 		{
 			fill: ['#b9deff'],
 			timing: { duration: 450 }
 		}
 	],
-	[TRACKED_ACTIONS.INSERT]: [
+	[TrackedActions.new]: [
 		{
 			fill: ['#b9ffda'],
 			opacity: [0, 1],
