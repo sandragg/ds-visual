@@ -1,6 +1,5 @@
 import {
 	ViewModel,
-	CallbackFunction,
 	History,
 	HistoryStep,
 	AnimationHistoryStep
@@ -23,7 +22,18 @@ export class Tracer implements History {
 		this.animationHistory = null;
 	}
 
-	public buildAnimationHistory(vm: ViewModel<any>, cb: CallbackFunction): void {
+	public buildAnimationHistory(vm: ViewModel<any>,
+                               cb: (vm: ViewModel<any>, step: HistoryStep, hist?: AnimationHistoryStep[]) => AnimationHistoryStep[]): void {
+		console.log('buildAnimationHistory', vm, this.history);
 
+		this.animationHistory = this.history.reduce(
+			(res, step) => {
+				const steps = cb(vm, step, res);
+				res.push(...steps);
+				return res;
+			},
+			[]
+		);
+		console.log('animationHistory', this.animationHistory);
 	}
 }

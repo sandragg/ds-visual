@@ -111,17 +111,17 @@ export interface History {
 	push(step: HistoryStep): void,
 	top(): HistoryStep,
 	reset(): void,
-	buildAnimationHistory(vm: ViewModel<any>, cb: CallbackFunction): void,
+	buildAnimationHistory(vm: ViewModel<any>, cb: Function): void,
 }
 
 export interface HistoryStep {
-	result: any,
+	id: number | string,
 	attrs: object,
-	opts?: TrackedItemOption
+	opts?: TrackedActions
 }
 
 export interface AnimationHistoryStep {
-	refs: Array<RefObject<HTMLElement>>,
+	ref: RefObject<HTMLElement>,
 	attrs: object,
 	action?: TrackedActions,
 	previousState?: number | null
@@ -135,7 +135,7 @@ export interface VMC {
 export interface AC {
 	history: ControllerHistory,
 	toggleHistoryStatus(): void,
-	build(handler: (traces: History) => void): void,
+	build(vm: ViewModel<any>, handler: Function): void,
 	start(): void
 	// + methods to change animation steps
 }

@@ -1,7 +1,7 @@
 import {
 	AC,
-	History,
-	ControllerHistory
+	ControllerHistory,
+	ViewModel
 } from 'src/services/interface';
 import { Tracer } from 'src/services/tracer';
 
@@ -24,7 +24,8 @@ export class AnimationController implements AC {
 		this._history.isUpdating = !this._history.isUpdating;
 	}
 
-	public build(handler: (traces: History) => void): void {
+	public build(vm: ViewModel<any>, handler: Function): void {
+		this._history.traces.buildAnimationHistory(vm, handler);
 	}
 
 	public start(): void {
