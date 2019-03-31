@@ -56,5 +56,6 @@ export class Stack<VType> implements ADTStack<VType> {
 }
 
 export const StackTrackedItems: TrackedClassItem[] = [
-	['up', TrackedActions.select]
+	['up', TrackedActions.select],
+	['stack', TrackedActions.select]
 ];
