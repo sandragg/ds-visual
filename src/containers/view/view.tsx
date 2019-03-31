@@ -1,19 +1,16 @@
 import * as React from 'react';
+import { Component, ReactNode } from 'react';
 import {
-	ViewModel,
+	ADTView,
 	ArrowViewModel,
+	CallbackFunction,
+	NodeFactory,
 	NodeViewModel,
-	ADTView
+	Point,
+	ViewModel
 } from 'src/services/interface';
-import {
-	calcArrowMatrix,
-	getNodeCenterPoint,
-	getById,
-} from 'src/services/helpers';
-import {
-	arrowAnimationStates,
-	nodeAnimationStates
-} from 'src/services/animation-style';
+import { calcArrowMatrix, getById, getNodeCenterPoint, } from 'src/services/helpers';
+import { arrowAnimationStates, nodeAnimationStates } from 'src/services/animation-style';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
 import { ArrowType, TrackedActions } from 'src/services/constants';
@@ -30,12 +27,17 @@ export abstract class View<M, VType>
 	public state: ViewModel<VType> = this.getViewInitialState();
 
 	public viewModel: ViewModel<VType>;
-
+	/**
+	 * Initial coordinates for structure view.
+	 * @protected
+	 * @readonly
+	 */
+	protected readonly INITIAL_COORDS: Point = null;
 	protected abstract Node: NodeFactory;
 
 	public render() {
 		return (
-				<g transform={`translate(0,0)`}>
+				<g transform={`translate(${this.INITIAL_COORDS.x},${this.INITIAL_COORDS.y})`}>
 					{...this.build()}
 				</g>
 		);
@@ -48,7 +50,11 @@ export abstract class View<M, VType>
 	 * @param model Structure model
 	 */
 	public abstract buildViewModel(model: M): void;
-	public abstract applyViewModel(): void;
+	public abstract buildAnimationStep();
+
+	public applyViewModel(cb?: CallbackFunction): void {
+		this.setState(this.viewModel, typeof cb === 'function' && cb);
+	}
 	/**
 	 * Build Node view model.
 	 * @protected
@@ -98,14 +104,14 @@ export abstract class View<M, VType>
 	 *         result[0] - Array of Animated Arrow components
 	 *         result[1] - Array of Animated Node components
 	 */
-	protected abstract build(): ReactNode[];
-	// 	const { arrows, nodes } = this.state;
-	//
-	// 	return [
-	// 		this.buildArrowComponents(arrows),
-	// 		this.buildNodeComponents(nodes)
-	// 	];
-	// }
+	protected build(): ReactNode[] {
+		const { arrows, nodes } = this.state;
+
+		return [
+			this.buildArrowComponents(arrows),
+			this.buildNodeComponents(nodes)
+		];
+	}
 	/**
 	 * Build array of Animated Arrow components.
 	 * @protected

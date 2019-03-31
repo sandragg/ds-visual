@@ -144,7 +144,8 @@ export interface ADTView<M, VType> {
 	state: ViewModel<VType>,
 	viewModel: ViewModel<VType>,
 	buildViewModel(model: M): void,
-	applyViewModel(): void
+	applyViewModel(cb?: CallbackFunction): void,
+	buildAnimationStep(): void
 }
 
 export interface ControllerHistory {

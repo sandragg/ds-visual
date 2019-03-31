@@ -141,3 +141,15 @@ export function getNodeCenterPoint({ x, y }: Point): Point {
 export function getById(container: any[], id: number): any {
 	return container.find(elem => elem.id === id);
 }
+
+
+export function areObjectsEqual(obj1, obj2): boolean {
+	if (obj1 === obj2) {
+		return true;
+	}
+
+	const obj1Keys = Object.keys(obj1);
+	const obj2Keys = Object.keys(obj2);
+
+	return obj1Keys.length === obj2Keys.length && obj1Keys.every(key => Object.is(obj1[key], obj2[key]));
+}
