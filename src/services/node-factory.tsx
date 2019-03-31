@@ -7,7 +7,7 @@ import {
 	FieldType,
 	FieldWidth
 } from 'src/services/constants';
-import { NodeFactory, NodeProps } from 'src/services/interface';
+import { NodeFactory, NodeProps, Point } from 'src/services/interface';
 
 class ArrayElementFactory implements NodeFactory {
 	public direction: Direction;
@@ -48,13 +48,22 @@ class ArrayElementFactory implements NodeFactory {
 
 						return (
 							field === FieldType.value
-								? <ValueField attrs={childrenAttrs}>{children}</ValueField>
+								? <ValueField attrs={childrenAttrs}>{attrs.value}</ValueField>
 								: <RefField attrs={childrenAttrs} />
 						);
 					})
 				}
 			</Node>
 		)
+	}
+
+	public nodeCoords(index: number): Point {
+		const isHoriz = this.direction === Direction.horizontal;
+
+		return {
+			x: isHoriz ? index * this.width : 0,
+			y: isHoriz ? 0 : index * this.height
+		}
 	}
 }
 

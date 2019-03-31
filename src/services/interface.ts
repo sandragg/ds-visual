@@ -4,6 +4,7 @@ import {
 	ReactNode
 } from 'react';
 import {
+	ArrowType,
 	Direction,
 	FieldType,
 	TrackedActions
@@ -65,9 +66,10 @@ export interface ArrowViewModel {
 	id: number,
 	ref: RefObject<HTMLElement>,
 	outCoords: Point,
-	outNode: number,
+	outNode?: number,
 	inCoords: Point,
-	inNode: number
+	inNode?: number,
+	type: ArrowType
 }
 
 export interface ViewModel<VType> {
@@ -92,7 +94,8 @@ export interface NodeFactory {
 	fields: FieldType[],
 	width: number,
 	height: number,
-	component: ComponentType
+	component: ComponentType,
+	nodeCoords(index: number): Point
 }
 
 export interface NodeProps {

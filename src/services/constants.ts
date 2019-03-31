@@ -33,3 +33,13 @@ export const FieldWidth = {
 	[FieldType.value]: 40,
 	[FieldType.ref]: 20
 };
+
+export const enum ArrowType {
+	'cursor',
+	'link'
+}
+
+export const enum CursorOptions {
+	'length' = 30,
+	'offset' = 10
+}

@@ -16,9 +16,7 @@ import {
 } from 'src/services/animation-style';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
-import { Component, ReactNode } from 'react';
-import { NodeFactory } from 'src/services/interface';
-import { TrackedActions } from 'src/services/constants';
+import { ArrowType, TrackedActions } from 'src/services/constants';
 
 let idCounter: number = 1;
 
@@ -89,7 +87,8 @@ export abstract class View<M, VType>
 			outNode: outNodeVM.id,
 			outCoords: getNodeCenterPoint(outNodeVM.coords),
 			inNode: inNodeVM.id,
-			inCoords: getNodeCenterPoint(inNodeVM.coords)
+			inCoords: getNodeCenterPoint(inNodeVM.coords),
+			type: ArrowType.link
 		}
 	}
 	/**
@@ -129,7 +128,7 @@ export abstract class View<M, VType>
 							}
 						}}
 				>
-					<Arrow outPoint={arrow.outCoords} inPoint={arrow.inCoords} />
+					<Arrow outPoint={arrow.outCoords} inPoint={arrow.inCoords} type={arrow.type} />
 				</Animated>
 		))
 	}
