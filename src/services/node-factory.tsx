@@ -48,7 +48,7 @@ class ArrayElementFactory implements NodeFactory {
 
 						return (
 							field === FieldType.value
-								? <ValueField attrs={childrenAttrs}>{attrs.value}</ValueField>
+								? <ValueField attrs={childrenAttrs}>{attrs.value != null ? attrs.value : children}</ValueField>
 								: <RefField attrs={childrenAttrs} />
 						);
 					})

@@ -3,13 +3,13 @@ import {
 	Point,
 	CallbackFunction,
 	PromiseDefer,
-	AnimatedNode,
-	PromiseStatus
+	PromiseStatus,
+	AnimationHistoryStep
 } from './interface';
 import {
-	NODE_OPTIONS,
 	PROMISE_STATUSES
 } from './constants';
+import { nodeAnimationStates } from 'src/services/animation-style';
 
 /**
  * Wrapper extends the promise with the current status property.
@@ -44,17 +44,17 @@ export function defer(): PromiseDefer {
  * Animate queue nodes consistently.
  * @param queue
  */
-export function animateQueue(queue: AnimatedNode[]): PromiseDefer {
+export function animateQueue(queue: AnimationHistoryStep[]): PromiseDefer {
 	const deferred: any = defer();
 	deferred.promise = StatusPromise(deferred.promise);
 
 	const queuePromise: Promise<any> = new Promise(
 			async (resolve: CallbackFunction, reject: CallbackFunction) => {
-			for (const { ref, animationAttrs } of queue) {
+			for (const { ref, attrs, action } of queue) {
 				if (deferred.promise.status === PROMISE_STATUSES.REJECTED) {
 					reject();
 				}
-				ref.current && await ref.current.animate(animationAttrs);
+				ref.current && await ref.current.animate([ attrs, ...nodeAnimationStates[action] ]);
 			}
 			deferred.resolve();
 		}

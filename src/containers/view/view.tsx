@@ -124,8 +124,8 @@ export abstract class View<M, VType>
 						ref={arrow.ref}
 						animationsAttrs={{
 							start: {
-								opacity: 0,
-								scale: 0,
+								// opacity: 0,
+								// scale: 0,
 								transform: `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`
 							},
 							update: {
@@ -150,8 +150,8 @@ export abstract class View<M, VType>
 						ref={node.ref}
 						animationsAttrs={{
 							start: {
-								opacity: 0,
-								scale: 0,
+								// opacity: 0,
+								// scale: 0,
 								x: node.coords.x,
 								y: node.coords.y
 							},
