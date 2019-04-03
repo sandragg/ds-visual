@@ -7,7 +7,7 @@ import {
 
 export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 	private readonly model: M;
-	private readonly view: V;
+	public readonly view: V;
 
 	constructor(model: M, view: V) {
 		this.model = model;

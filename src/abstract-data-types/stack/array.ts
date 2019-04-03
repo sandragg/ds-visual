@@ -3,8 +3,8 @@ import { TrackedActions } from 'src/services/constants';
 
 export class Stack<VType> implements ADTStack<VType> {
 
-	public static OUT_OF_DOMAIN: number = -1;
-	private static STACK_SIZE: number = 20;
+	public static readonly OUT_OF_DOMAIN: number = -1;
+	public static readonly STACK_SIZE: number = 20;
 
 	private readonly stack: VType[];
 	private up: number;

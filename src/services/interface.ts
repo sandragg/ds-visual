@@ -129,7 +129,8 @@ export interface AnimationHistoryStep {
 }
 
 export interface VMC {
-	build(action: string, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): Promise<void>,
+	view: ADTView<any, any>;
+	build(action: ModelAction, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): Promise<void>,
 	render(): Promise<void>
 }
 
