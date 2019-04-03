@@ -126,10 +126,10 @@ export function calcTransformValue(attrs: any): string {
  * @param x Node top left corner
  * @param y Node top left corner
  */
-export function getNodeCenterPoint({ x, y }: Point): Point {
+export function getNodeCenterPoint({ x, y }: Point): Point { // function probably will be removed
 	return {
-		x: x + NODE_OPTIONS.WIDTH / 2,
-		y: y + NODE_OPTIONS.HEIGHT / 2
+		x,
+		y
 	}
 }
 
