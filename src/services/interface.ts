@@ -138,7 +138,8 @@ export interface AC {
 	history: ControllerHistory,
 	toggleHistoryStatus(): void,
 	build(vm: ViewModel<any>, handler: Function): void,
-	start(): void
+	start(): Promise<void>
+	clearHistory(): void
 	// + methods to change animation steps
 }
 
