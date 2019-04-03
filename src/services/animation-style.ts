@@ -25,11 +25,12 @@ export const arrowAnimationStates = {
 };
 
 export const nodeAnimationStates = {
-	[TrackedActions.default]: {
-		fill: ['peachpuff'],
-		scale: [1],
-		opacity: [1]
-	},
+	[TrackedActions.default]: [
+		{
+			fill: 'peachpuff',
+			opacity: 1
+		}
+	],
 	[TrackedActions.select]: [
 		{
 			fill: ['#b9deff'],
@@ -43,5 +44,11 @@ export const nodeAnimationStates = {
 			scale: [0, 1],
 			timing: { duration: 200 }
 		}
-	]
+	],
+	[TrackedActions.change]: [
+		{
+			fill: ['#ffbe65'],
+			timing: { duration: 450 }
+		}
+	],
 };
