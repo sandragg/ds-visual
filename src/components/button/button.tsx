@@ -6,9 +6,9 @@ interface Props extends HTMLAttributes<HTMLElement> {
 	disabled?: boolean
 }
 
-const Button = ({ theme, children, ...props }: Props) => (
+const Button = ({ theme, className = '', children, ...props }: Props) => (
 		<button
-			className={`button button_${theme}`}
+			className={`button button_${theme} ${className}`}
 			{...props}
 		>
 			{children}
