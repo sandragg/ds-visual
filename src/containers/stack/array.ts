@@ -10,6 +10,10 @@ import {
 	ViewModel
 } from 'src/services/interface';
 import {
+	areObjectsEqual,
+	calcArrowMatrix
+} from 'src/services/helpers';
+import {
 	ArrowType,
 	CursorOptions,
 	FieldType,
@@ -18,7 +22,6 @@ import {
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
 import { ArrayElementFactory } from 'src/services/node-factory';
-import { areObjectsEqual } from 'src/services/helpers';
 
 let idCounter: number = 1;
 
@@ -67,18 +70,28 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		y: CursorOptions.length + CursorOptions.offset
 	};
 
+	constructor(props) {
+		super(props);
+
+		this.state = this.buildInitialViewModel();
+	}
+	// TODO NEED REFACTORING! Currently it recalculates entire model every time.
 	public buildViewModel(model: Stack<VType>): void {
 		const { stack, up } = model as any;
+
+		if (up < 0) {
+			this.viewModel = this.buildInitialViewModel();
+			return;
+		}
 
 		this.viewModel = this.getViewInitialState();
 		const { nodes, arrows } = this.viewModel;
 		const cursorVM = this.state.arrows[0];
 
 		nodes[0] = this.buildNodeViewModel([stack[0], 0]);
-		for (let i = 1; i < stack.length; i++) {
+		for (let i = 1; i < Stack.STACK_SIZE; i++) {
 			nodes[i] = this.buildNodeViewModel([stack[i], i], nodes[i - 1]);
 		}
-
 		arrows[0] = this.buildCursorViewModel(nodes[up], cursorVM && cursorVM.id);
 	}
 
@@ -106,8 +119,8 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 		return (vm: ViewModel<VType>, { id, opts, attrs }: HistoryStep, hist?: AnimationHistoryStep[]): AnimationHistoryStep[] => {
 			const itemVM = id === 'up'
-					? vm.arrows[0]
-					: vm.nodes.find(node => node.id === id);
+				? vm.arrows[0]
+				: vm.nodes.find(node => node.id === id);
 			let prevStateIndex = id in lastState ? lastState[id] : null;
 			const isChange = opts === TrackedActions.change;
 			const steps = [];
@@ -116,7 +129,11 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 				steps.push({
 					ref: itemVM.ref,
 					action: TrackedActions.default,
-					attrs: isChange ? getAttrs(attrs, true) : attrs,
+					attrs: this.mapToAnimateAttrs(
+						isChange
+							? getAttrs(attrs, true)
+							: attrs
+					),
 					previousState: prevStateIndex
 				});
 
@@ -125,16 +142,20 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 			else if (isChange) {
 				const prevState = hist[prevStateIndex];
 
-				prevState.attrs = {
+				prevState.attrs = this.mapToAnimateAttrs({
 					...prevState.attrs,
 					...getAttrs(attrs, true)
-				};
+				});
 			}
 
 			steps.push({
 				ref: itemVM.ref,
 				action: opts,
-				attrs: isChange ? getAttrs(attrs, false) : attrs,
+				attrs: this.mapToAnimateAttrs(
+					isChange
+						? getAttrs(attrs, false)
+						: attrs
+				),
 				previousState: prevStateIndex
 			});
 
@@ -142,10 +163,6 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 			return steps;
 		};
-	}
-
-	private getCursorCoords(index: number): Point {
-		return index === -1 ? { x: -10, y: 0 } : this.Node.nodeCoords(index);
 	}
 
 	protected buildNodeViewModel([ value, id ]: [VType, number],
@@ -165,23 +182,65 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		};
 	}
 
-	protected buildCursorViewModel(nodeVM: NodeViewModel<VType>,
+	protected buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
                                  existedArrowId?: number ): ArrowViewModel {
 		const id = existedArrowId || idCounter++;
-		const inCoords = {
-			x: nodeVM.coords.x + this.Node.width / 2,
-			y: nodeVM.coords.y - CursorOptions.offset
-		};
+		const [ outCoords, inCoords ] = this.getCursorCoords(
+			nodeVM ? nodeVM.id : -1
+		);
 
 		return {
 			id,
 			ref: React.createRef(),
-			outCoords: {
-				x: inCoords.x,
-				y: inCoords.y - CursorOptions.length
-			},
+			outCoords,
 			inCoords,
 			type: ArrowType.cursor
 		};
+	}
+
+	private buildInitialViewModel(): ViewModel<VType> {
+		const initialValue = '' as any;
+		const viewModel	= this.getViewInitialState();
+		const { nodes, arrows } = viewModel;
+		const cursorVM = this.state.arrows && this.state.arrows[0];
+
+		nodes[0] = this.buildNodeViewModel([initialValue, 0]);
+		for (let i = 1; i < Stack.STACK_SIZE; i++) {
+			nodes[i] = this.buildNodeViewModel([initialValue, i], nodes[i - 1]);
+		}
+		arrows[0] = this.buildCursorViewModel(null, cursorVM && cursorVM.id);
+
+		return viewModel;
+	}
+
+	private mapToAnimateAttrs(attrs) {
+		const { up, ...other } = attrs;
+		if (up === undefined) {
+			return attrs;
+		}
+
+		const [ outPoint, inPoint ] = this.getCursorCoords(up);
+
+		return {
+			...other,
+			transform: [`matrix(${calcArrowMatrix(outPoint, inPoint).matrix})`]
+		}
+	}
+
+	private getCursorCoords(index: number): Point[] {
+		const inNodeCoords = index === -1
+				? { x: -this.Node.width, y: 0 }
+				: this.Node.nodeCoords(index);
+
+		const inPoint: Point = {
+			x: inNodeCoords.x + this.Node.width / 2,
+			y: inNodeCoords.y - CursorOptions.offset
+		};
+		const outPoint: Point = {
+			x: inPoint.x,
+			y: inPoint.y - CursorOptions.length
+		};
+
+		return [ outPoint, inPoint ];
 	}
 }
