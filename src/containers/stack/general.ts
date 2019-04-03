@@ -4,31 +4,31 @@ export const StackInterface: ModelAction[] = [
 	{
 		name: 'Push',
 		method: 'push',
-		handler: 'onInsertUpdate'
+		mutable: true
 	},
 	{
 		name: 'Pop',
 		method: 'pop',
-		handler: 'onInsertUpdate'
+		mutable: true
 	},
 	{
 		name: 'Top',
 		method: 'top',
-		handler: 'onInsertUpdate'
+		mutable: false
 	},
 	{
 		name: 'Reset',
 		method: 'erase',
-		handler: 'onInsertUpdate'
+		mutable: true
 	},
 	{
 		name: 'Empty',
 		method: 'empty',
-		handler: 'onInsertUpdate'
+		mutable: false
 	},
 	{
 		name: 'Full',
 		method: 'full',
-		handler: 'onInsertUpdate'
-	},
+		mutable: false
+	}
 ];

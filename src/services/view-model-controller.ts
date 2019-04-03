@@ -1,4 +1,9 @@
-import { ADTView, CallbackFunction, VMC } from 'src/services/interface';
+import {
+	ADTView,
+	CallbackFunction,
+	ModelAction,
+	VMC
+} from 'src/services/interface';
 
 export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 	private readonly model: M;
@@ -9,14 +14,14 @@ export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 		this.view = view;
 	}
 	// TODO create condition to update the view
-	public build(action: string,
+	public build(action: ModelAction,
                params: any[],
                preUpdateCb?: CallbackFunction,
                postUpdateCb?: CallbackFunction): Promise<void> {
 		return new Promise(resolve => {
-			const flag: any = this.updateModel(action, params, preUpdateCb);
+			const flag: any = this.updateModel(action.method, params, preUpdateCb);
 			// @ts-ignore
-			if (flag !== this.model.constructor.OUT_OF_DOMAIN) { // && method is mutable
+			if (action.mutable && flag !== this.model.constructor.OUT_OF_DOMAIN) {
 				this.updateView(postUpdateCb || preUpdateCb);
 			}
 			resolve();

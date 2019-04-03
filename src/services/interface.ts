@@ -85,7 +85,8 @@ export interface InitialState<M, VType> {
 export interface ModelAction {
 	name: string,
 	method: string,
-	handler: string
+	mutable: boolean
+	prerender?: boolean
 }
 
 // TODO add getFieldCoords method
