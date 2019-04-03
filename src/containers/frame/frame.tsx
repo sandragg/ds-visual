@@ -19,10 +19,6 @@ export class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
 	private View: V;
 	private viewRef: MutableRefObject<V> = React.createRef();
 
-	get view() {
-		return this.viewRef.current;
-	}
-
 	constructor(Model: new () => M, trackedItems: TrackedClassItem[], View: any) {
 		this.AnimationControl = new AnimationController();
 
