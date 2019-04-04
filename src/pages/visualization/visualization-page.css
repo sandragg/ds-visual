@@ -26,15 +26,15 @@
 	background: #20093C;
 }
 
-.toolbar__input {
+.toolbar__input,
+.toolbar__output {
 	position: absolute;
 	top: 0;
-	left: 50%;
 	transform: translate(-50%, -100%);
 
 	padding: 5px 10px;
 
-	border: 2px solid #20093C;
+	border: 2px solid;
 	border-bottom: none;
 	border-radius: 10px 10px 0 0;
 
@@ -43,8 +43,25 @@
 	text-align: center;
 	outline: none;
 }
+.toolbar__input {
+	left: 50%;
+
+	border-color: #20093C;
+}
+
+.toolbar__output {
+	left: 20%;
+	height: 1.2em;
+
+	border-color: #ED5B3B;;
+}
 
 .toolbar__button {
 	width: fit-content;
 	min-width: 120px;
+}
+
+.toolbar input[type=number]::-webkit-inner-spin-button,
+.toolbar input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
 }

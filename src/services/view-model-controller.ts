@@ -19,12 +19,12 @@ export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
                preUpdateCb?: CallbackFunction,
                postUpdateCb?: CallbackFunction): Promise<void> {
 		return new Promise(resolve => {
-			const flag: any = this.updateModel(action.method, params, preUpdateCb);
+			const result: any = this.updateModel(action.method, params, preUpdateCb);
 			// @ts-ignore
-			if (action.mutable && flag !== this.model.constructor.OUT_OF_DOMAIN) {
+			if (action.mutable && result !== this.model.constructor.OUT_OF_DOMAIN) {
 				this.updateView(postUpdateCb || preUpdateCb);
 			}
-			resolve();
+			resolve(result);
 		});
 	}
 
