@@ -120,6 +120,11 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 					type="number"
 					placeholder="Enter the number"
 				/>
+				<output
+					className="toolbar__animation"
+				>
+					Animation controls
+				</output>
 				{
 					structKit.actions.map((action: ModelAction) => (
 						<Button
