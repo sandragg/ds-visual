@@ -79,11 +79,6 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 	public buildViewModel(model: Stack<VType>): void {
 		const { stack, up } = model as any;
 
-		if (up < 0) {
-			this.viewModel = this.buildInitialViewModel();
-			return;
-		}
-
 		this.viewModel = this.getViewInitialState();
 		const { nodes, arrows } = this.viewModel;
 		const cursorVM = this.state.arrows[0];
