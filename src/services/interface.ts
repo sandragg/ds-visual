@@ -129,7 +129,8 @@ export interface AnimationHistoryStep {
 }
 
 export interface VMC {
-	view: ADTView<any, any>;
+	view: ADTView<any, any>,
+	validateModelOperation(handler: (model: any) => ValidationResponse): ValidationResponse,
 	build(action: ModelAction, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): Promise<void>,
 	render(): Promise<void>
 }
@@ -160,4 +161,9 @@ export interface ViewFrame<M, V extends ADTView<M, any>> {
 	ViewModelControl: VMC,
 	AnimationControl: AC,
 	component: ComponentType
+}
+
+export interface ValidationResponse {
+	isValid: boolean,
+	errorText?: string
 }

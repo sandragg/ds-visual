@@ -2,6 +2,7 @@ import {
 	ADTView,
 	CallbackFunction,
 	ModelAction,
+	ValidationResponse,
 	VMC
 } from 'src/services/interface';
 
@@ -12,6 +13,9 @@ export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 	constructor(model: M, view: V) {
 		this.model = model;
 		this.view = view;
+	}
+	public validateModelOperation(handler: (model: M) => ValidationResponse): ValidationResponse {
+		return handler(this.model);
 	}
 	// TODO create condition to update the view
 	public build(action: ModelAction,
@@ -35,6 +39,7 @@ export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
 	}
 
 	private updateModel(action: string, params: any[], cb?: CallbackFunction): any {
+
 		typeof cb === 'function' && cb();
 		return this.model[action](...params);
 	}

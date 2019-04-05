@@ -8,6 +8,7 @@ import { Button } from 'src/components/button';
 import {
 	ModelAction,
 	TrackedClassItem,
+	ValidationResponse,
 	ViewFrame
 } from 'src/services/interface';
 import { getById } from 'src/services/helpers';
@@ -26,7 +27,8 @@ interface Structure {
 	view: ComponentType,
 	actions: ModelAction[],
 	trackedItems: TrackedClassItem[],
-	deriveAndValidate(...params: any[]): { params?: any[], isValid: boolean, errorText?: string }
+	validateOperation(operation: string): (model: any) => ValidationResponse,
+	deriveAndValidateParams(...params: any[]): ValidationResponse & { params?: any[] }
 }
 
 // TODO loadable
@@ -38,7 +40,26 @@ const structuresSet: Structure[] = [
 		view: ArrayView,
 		actions: StackInterface,
 		trackedItems: StackTrackedItems,
-		deriveAndValidate: (action: ModelAction, inputs: number) => {
+		validateOperation: (operation: string) => (model: Stack<any>): ValidationResponse => {
+			let errorText;
+
+			switch (operation) {
+				case 'push':
+					if (model.full()) {
+						errorText = 'Stack overflowed'
+					}
+					break;
+				case 'pop':
+				case 'top':
+					if (model.empty()) {
+						errorText = 'Stack is empty'
+					}
+					break;
+			}
+
+			return errorText ? { isValid: false, errorText } : { isValid: true };
+		},
+		deriveAndValidateParams(action: ModelAction, inputs: number) {
 			if (action.method !== 'push') {
 				return { isValid: true };
 			}
@@ -72,7 +93,7 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 	);
 	const FrameComponent = frame.current.component;
 
-	const handleResult = useCallback(
+	const showResult = useCallback(
 		(result: any) => {
 			if (result != null) {
 				outputRef.current.hidden = false;
@@ -89,15 +110,15 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 			</section>
 			<section className="section toolbar">
 				<output
-						ref={outputRef}
-						className="toolbar__output"
-						hidden
+					ref={outputRef}
+					className="toolbar__output"
+					hidden
 				/>
 				<input
-						ref={inputRef}
-						className="toolbar__input"
-						type="number"
-						placeholder="Enter the number"
+					ref={inputRef}
+					className="toolbar__input"
+					type="number"
+					placeholder="Enter the number"
 				/>
 				{
 					structKit.actions.map((action: ModelAction) => (
@@ -110,7 +131,7 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 									params,
 									isValid,
 									errorText
-								} = structKit.deriveAndValidate(action, [inputRef.current.value]);
+								} = structKit.deriveAndValidateParams(action, [inputRef.current.value]);
 
 								if (!isValid) {
 									outputRef.current.hidden = false;
@@ -119,7 +140,7 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 								}
 								outputRef.current.hidden = true;
 								inputRef.current.value = '';
-								actionHandler(frame.current, action, params, handleResult);
+								actionHandler(frame.current, action, params, structKit.validateOperation, showResult);
 							}}
 						>
 							{action.name}
@@ -138,9 +159,16 @@ function getStructureKitById(id: number) {
 function actionHandler(frame: ViewFrame<any, any>,
                        action: ModelAction,
                        params: any[],
+                       validateOperation: (operation: string) => (model: any) => ValidationResponse,
                        actionResultHandler: Function): void {
 	const FrameAC = frame.AnimationControl;
 	const FrameVMC = frame.ViewModelControl;
+
+	const { isValid, errorText } = FrameVMC.validateModelOperation(validateOperation(action.method));
+	if (!isValid) {
+		actionResultHandler(errorText);
+		return;
+	}
 
 	FrameAC.clearHistory();
 	FrameVMC.render()
