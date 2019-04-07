@@ -158,8 +158,8 @@ export interface ControllerHistory {
 }
 
 export interface ViewFrame<M, V extends ADTView<M, any>> {
-	ViewModelControl: VMC,
-	AnimationControl: AC,
+	ViewModelController: VMC,
+	AnimationController: AC,
 	component: ComponentType
 }
 

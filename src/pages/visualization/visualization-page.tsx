@@ -166,8 +166,8 @@ function actionHandler(frame: ViewFrame<any, any>,
                        params: any[],
                        validateOperation: (operation: string) => (model: any) => ValidationResponse,
                        actionResultHandler: Function): void {
-	const FrameAC = frame.AnimationControl;
-	const FrameVMC = frame.ViewModelControl;
+	const FrameAC = frame.AnimationController;
+	const FrameVMC = frame.ViewModelController;
 
 	const { isValid, errorText } = FrameVMC.validateModelOperation(validateOperation(action.method));
 	if (!isValid) {
