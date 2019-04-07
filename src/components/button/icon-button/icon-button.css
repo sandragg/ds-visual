@@ -1,0 +1,26 @@
+.icon-button {
+	box-sizing: border-box;
+	height: 30px;
+	width: 30px;
+
+	padding: 4px;
+
+	border: none;
+	border-radius: 20px;
+	background: transparent;
+	opacity: 0.8;
+	cursor: pointer;
+	outline: none;
+}
+
+.icon-button:hover {
+	opacity: 1;
+}
+
+.icon-button > * {
+	fill: #34224B;
+}
+
+.icon-button:active > * {
+	fill: #ED5B3B;
+}
