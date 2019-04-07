@@ -1,1 +1,1 @@
-export { VisualizationPage } from './visualization-page';
+export { default as VisualizationPage } from './visualization-page-container';

@@ -1,28 +1,11 @@
 import {
 	ModelAction,
-	TrackedClassItem,
 	ValidationResponse
 } from 'src/services/interface';
 import { StackInterface } from './interface';
 import { ArrayView } from './array';
 import { Array } from 'src/abstract-data-types/stack';
-import { View } from 'src/containers/view';
-
-interface ADTConfig {
-	id: number,
-	name: string,
-	interface: ModelAction[],
-	abstractions: AbstractionConfig[],
-	validateOperation(operation: string): (model: any) => ValidationResponse,
-	deriveAndValidateParams(...params: any[]): ValidationResponse & { params?: any[] }
-}
-
-interface AbstractionConfig {
-	name: string,
-	model: any,
-	trackedProps: TrackedClassItem[],
-	view: typeof View
-}
+import { ADTConfig } from 'src/containers/adt/index';
 
 const config: ADTConfig = {
 	id: 3,
