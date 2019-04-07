@@ -1,0 +1,17 @@
+.breadcrumbs {
+	display: flex;
+	align-items: center;
+
+	text-transform: capitalize;
+	font-size: 1.4em;
+	font-family: 'Rubik', sans-serif;
+	color: #34224B;
+}
+
+.breadcrumbs__divider {
+	height: 0.7em;
+
+	margin: 6px;
+
+	fill: #ED5B3B;
+}
