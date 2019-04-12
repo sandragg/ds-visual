@@ -121,8 +121,15 @@ export interface HistoryStep {
 	opts?: TrackedActions
 }
 
-export interface AnimationHistoryStep {
-	ref: RefObject<HTMLElement>,
+interface AnimatedElement {
+	id: number | string,
+	animate(animAttrs: any): Promise<any>
+}
+
+export type AnimationHistoryStep = ElementAnimationStep | ElementAnimationStep[];
+
+export interface ElementAnimationStep {
+	ref: RefObject<AnimatedElement>,
 	attrs: object,
 	action?: TrackedActions,
 	previousState?: number | null
