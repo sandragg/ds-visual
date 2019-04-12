@@ -10,6 +10,7 @@ import {
 	TrackedActions
 } from 'src/services/constants';
 import { PlainObject } from 'react-move/core';
+import { History } from 'src/services/history';
 
 export interface Structure {
 	id: number,
@@ -159,8 +160,8 @@ export interface ADTView<M, VType> {
 	buildAnimationStep(): (vm: ViewModel<VType>, step: HistoryStep, hist?: AnimationHistoryStep[]) => AnimationHistoryStep[]
 }
 
-export interface ControllerHistory {
-	traces: History,
+export interface Trace {
+	history: History,
 	isUpdating: boolean
 }
 
