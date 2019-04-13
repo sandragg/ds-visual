@@ -22,8 +22,8 @@ export class Frame<M, V extends View<M, any>> {
 	public ViewModelController: VMC;
 	public AnimationController: AnimationController;
 
-	private model: M;
-	private View: V;
+	private readonly model: M;
+	private readonly View: V;
 	private viewRef: MutableRefObject<any> = React.createRef();
 
 	constructor(config: AbstractionConfig) {
@@ -35,12 +35,11 @@ export class Frame<M, V extends View<M, any>> {
 				config.trackedProps,
 				config.trackHandler(this.AnimationController.trace)
 		);
-
-		this.component = this.component.bind(this);
 	}
 
-	public component() {
-		const { View }: any = this;
+	public component: FunctionComponent<FrameProps> = (props) => {
+		const { title } = props;
+		const StructureView: any = this.View;
 
 		return (
 			<section className="frame">
@@ -49,7 +48,7 @@ export class Frame<M, V extends View<M, any>> {
 					<AnimationControl className="frame__controls" />
 				</header>
 				<Canvas>
-					<View
+					<StructureView
 						ref={ref => {
 							this.viewRef.current = ref;
 							this.ViewModelController = new ViewModelController(this.model, this.viewRef.current);

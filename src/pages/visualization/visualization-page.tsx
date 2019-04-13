@@ -1,96 +1,28 @@
 import React, {
-	useMemo,
 	useRef,
-	useCallback,
-	ComponentType
+	useCallback
 } from 'react';
 import { Button } from 'src/components/button';
 import {
 	ModelAction,
-	TrackedClassItem,
 	ValidationResponse,
 	ViewFrame
 } from 'src/services/interface';
-import { getById } from 'src/services/helpers';
-import { ArrayView, StackInterface } from 'src/containers/stack';
-import { Stack, StackTrackedItems } from 'src/abstract-data-types/stack/array';
 import { Frame } from 'src/containers/frame';
-import { Redirect, RouteComponentProps } from 'react-router';
-import { ROUTES } from 'src/services/routes';
+import { ADTConfig } from 'src/containers/adt';
 import 'src/App.css';
 import './visualization-page.css';
-
-interface Structure {
-	id: number,
-	name: string,
-	model: new () => object,
-	view: ComponentType,
-	actions: ModelAction[],
-	trackedItems: TrackedClassItem[],
-	validateOperation(operation: string): (model: any) => ValidationResponse,
-	deriveAndValidateParams(...params: any[]): ValidationResponse & { params?: any[] }
-}
-
-// TODO loadable
-const structuresSet: Structure[] = [
-	{
-		id: 3,
-		name: 'Stack',
-		model: Stack,
-		view: ArrayView,
-		actions: StackInterface,
-		trackedItems: StackTrackedItems,
-		validateOperation: (operation: string) => (model: Stack<any>): ValidationResponse => {
-			let errorText;
-
-			switch (operation) {
-				case 'push':
-					if (model.full()) {
-						errorText = 'Stack overflowed'
-					}
-					break;
-				case 'pop':
-				case 'top':
-					if (model.empty()) {
-						errorText = 'Stack is empty'
-					}
-					break;
-			}
-
-			return errorText ? { isValid: false, errorText } : { isValid: true };
-		},
-		deriveAndValidateParams(action: ModelAction, inputs: number) {
-			if (action.method !== 'push') {
-				return { isValid: true };
-			}
-
-			return inputs[0] && !isNaN(Number(inputs[0]))
-				? { isValid: true, params: [Number(inputs[0].slice(0,4))] }
-				: { isValid: false, errorText: 'Type of value should be a number' }
-		}
-	}
-];
-
-interface PageParams {
-	id: string
-}
+import { Breadcrumbs } from 'src/components/breadcrumbs';
+import { View } from 'src/containers/view';
 
 // TODO DRAFT VARIANT. Should be adapted for multiple frames + there will be a side bar with frames control.
-export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) => {
-	const structKit: Structure = useMemo(
-			() => getStructureKitById(Number(match.params.id)),
-			[]
-	);
-
-	if (!structKit) {
-		return <Redirect to={ROUTES.ALGS_AND_DS} />
-	}
+export const VisualizationPage = (props: { config: ADTConfig }) => {
+	const { config } = props;
+	const struct = config.abstractions[0];
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const outputRef = useRef<HTMLOutputElement>(null);
-	const frame = useRef<ViewFrame<any, any>>( // types
-		new Frame(structKit.model, structKit.trackedItems, structKit.view)
-	);
+	const frame = useRef<Frame<object, View<object, number>>>(new Frame(struct));
 	const FrameComponent = frame.current.component;
 
 	const showResult = useCallback(
@@ -106,7 +38,9 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 	return (
 		<>
 			<section className="section visualization-section">
-				<FrameComponent />
+				<FrameComponent
+					title={<Breadcrumbs chain={[config.name, struct.name]} />}
+				/>
 			</section>
 			<section className="section toolbar">
 				<output
@@ -126,7 +60,7 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 					Animation controls
 				</output>
 				{
-					structKit.actions.map((action: ModelAction) => (
+					config.interface.map((action: ModelAction) => (
 						<Button
 							key={action.name}
 							className="toolbar__button"
@@ -136,7 +70,7 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 									params,
 									isValid,
 									errorText
-								} = structKit.deriveAndValidateParams(action, [inputRef.current.value]);
+								} = config.deriveAndValidateParams(action, [inputRef.current.value]);
 
 								if (!isValid) {
 									outputRef.current.hidden = false;
@@ -145,7 +79,9 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 								}
 								outputRef.current.hidden = true;
 								inputRef.current.value = '';
-								actionHandler(frame.current, action, params, structKit.validateOperation, showResult);
+
+								// @ts-ignore
+								actionHandler(frame.current, action, params, config.validateOperation, showResult);
 							}}
 						>
 							{action.name}
@@ -156,10 +92,6 @@ export const VisualizationPage = ({ match }: RouteComponentProps<PageParams>) =>
 		</>
 	);
 };
-
-function getStructureKitById(id: number) {
-	return typeof id === 'number' && getById(structuresSet, id);
-}
 
 function actionHandler(frame: ViewFrame<any, any>,
                        action: ModelAction,
@@ -175,7 +107,7 @@ function actionHandler(frame: ViewFrame<any, any>,
 		return;
 	}
 
-	FrameAC.clearHistory();
+	FrameAC.reset();
 	FrameVMC.render()
 		.then(() => FrameVMC.build(action, params, FrameAC.toggleHistoryStatus))
 		.then(res => {
@@ -183,6 +115,7 @@ function actionHandler(frame: ViewFrame<any, any>,
 			return action.prerender && FrameVMC.render();
 		})
 		.then(() => FrameAC.build(FrameVMC.view.state, FrameVMC.view.buildAnimationStep()))
-		.then(() => FrameAC.start())
+		.then(() => FrameAC.play())
+		.then(res => console.log('res', res))
 		.catch(err => console.log('err', err));
 }

@@ -5,9 +5,10 @@
 
 	width: 100vw;
 	max-width: 2000px;
-	min-height: calc(85vh - var(--header-height));
+	height: calc(85vh - var(--header-height));
 
 	margin: var(--header-height) auto 0;
+	padding: 0;
 
 	background: #fff;
 }
@@ -41,9 +42,8 @@
 
 	padding: 5px 10px;
 
-	border: 2px solid;
+	border: 2px solid #ED5B3B;
 	border-radius: 0 0 10px 10px;
-	border-color: #ED5B3B;
 
 	font-size: 1.2em;
 	font-family: inherit;

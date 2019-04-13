@@ -14,9 +14,9 @@ export const Breadcrumbs = ({ chain }: BreadcrumbsProps) => {
 			{
 				chain.reduce((res, link, index) => {
 					if (index) {
-						res.push(<Divider />);
+						res.push(<Divider key={index} />);
 					}
-					res.push(<span>{link}</span>);
+					res.push(<span key={index + link}>{link}</span>);
 
 					return res;
 				}, [])
