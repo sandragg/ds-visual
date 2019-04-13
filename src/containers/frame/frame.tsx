@@ -3,7 +3,6 @@ import React, {
 	ReactNode,
 	FunctionComponent
 } from 'react';
-import { VMC } from 'src/services/interface';
 import { Canvas } from 'src/components/canvas';
 import { bindTracker } from 'src/services/tracker';
 import { ViewModelController } from 'src/services/view-model-controller';
@@ -19,7 +18,7 @@ export interface FrameProps {
 
 export class Frame<M, V extends View<M, any>> {
 
-	public ViewModelController: VMC;
+	public ViewModelController: ViewModelController<M, V>;
 	public AnimationController: AnimationController;
 
 	private readonly model: M;

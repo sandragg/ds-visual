@@ -130,7 +130,7 @@ export abstract class View<M, VType>
 								transform: `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`
 							},
 							update: {
-								...arrowAnimationStates[TrackedActions.default],
+								...arrowAnimationStates[TrackedActions.default][0],
 								transform: [`matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`]
 							}
 						}}
@@ -158,7 +158,7 @@ export abstract class View<M, VType>
 								y: node.coords.y
 							},
 							update: {
-								...nodeAnimationStates[TrackedActions.default],
+								...nodeAnimationStates[TrackedActions.default][0],
 								x: [node.coords.x],
 								y: [node.coords.y],
 								value: node.value

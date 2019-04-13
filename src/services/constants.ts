@@ -1,30 +1,25 @@
-/**
- * Tracked actions.
- */
 export const enum TrackedActions {
-	'default',
-	'select',
-	'new',
-	'delete',
-	'change'
+	default,
+	select,
+	new,
+	delete,
+	change
 }
-/**
- * Promise statuses.
- */
-export const PROMISE_STATUSES = {
-	PENDING: 'pending',
-	RESOLVED: 'resolved',
-	REJECTED: 'rejected'
-};
+
+export const enum PromiseStatus {
+	pending = 'pending',
+	resolved = 'resolved',
+	rejected = 'rejected'
+}
 
 export const enum Direction {
-	'vertical',
-	'horizontal'
+	vertical,
+	horizontal
 }
 
 export const enum FieldType {
-	'value',
-	'ref'
+	value,
+	ref
 }
 
 export const FieldHeight = 30;
@@ -35,11 +30,11 @@ export const FieldWidth = {
 };
 
 export const enum ArrowType {
-	'cursor',
-	'link'
+	cursor,
+	link
 }
 
 export const enum CursorOptions {
-	'length' = 30,
-	'offset' = 10
+	length = 30,
+	offset = 10
 }

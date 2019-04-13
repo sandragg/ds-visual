@@ -4,14 +4,13 @@ export const arrowAnimationStates = {
 	[TrackedActions.default]: {
 		fill: ['black'],
 		stroke: ['black'],
-		scale: [1],
-		opacity: [1]
+		opacity: 1
 	},
 	[TrackedActions.select]: [
 		{
 			fill: ['#b9deff'],
 			stroke: ['#b9deff'],
-			timing: { duration: 200 }
+			timing: { duration: 500 }
 		}
 	],
 	[TrackedActions.new]: [
@@ -34,7 +33,7 @@ export const nodeAnimationStates = {
 	[TrackedActions.select]: [
 		{
 			fill: ['#b9deff'],
-			timing: { duration: 450 }
+			timing: { duration: 1000 }
 		}
 	],
 	[TrackedActions.new]: [
@@ -48,7 +47,7 @@ export const nodeAnimationStates = {
 	[TrackedActions.change]: [
 		{
 			fill: ['#ffbe65'],
-			timing: { duration: 450 }
+			timing: { duration: 1000 }
 		}
 	],
 };

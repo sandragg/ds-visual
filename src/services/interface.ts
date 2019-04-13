@@ -9,8 +9,10 @@ import {
 	FieldType,
 	TrackedActions
 } from 'src/services/constants';
-import { PlainObject } from 'react-move/core';
+import { HashMap } from 'react-move';
 import { History } from 'src/services/history';
+import { AnimationController } from 'src/services/animation-controller';
+import { ViewModelController } from 'src/services/view-model-controller';
 
 export interface Structure {
 	id: number,
@@ -64,7 +66,7 @@ export interface NodeViewModel<VType> {
 }
 
 export interface ArrowViewModel {
-	id: number,
+	id: number | string,
 	ref: RefObject<HTMLElement>,
 	outCoords: Point,
 	outNode?: number,
@@ -102,18 +104,8 @@ export interface NodeFactory {
 
 export interface NodeProps {
 	nodeRef?: RefObject<SVGGElement>,
-	attrs?: PlainObject,
+	attrs?: HashMap,
 	children: ReactNode[]
-}
-
-// TODO add iterator ?!
-export interface History {
-	history: HistoryStep[],
-	animationHistory: AnimationHistoryStep[]
-	push(step: HistoryStep): void,
-	top(): HistoryStep,
-	reset(): void,
-	buildAnimationHistory(vm: ViewModel<any>, cb: Function): void,
 }
 
 export interface HistoryStep {
@@ -137,22 +129,6 @@ export interface ElementAnimationStep {
 	previousState?: number | null
 }
 
-export interface VMC {
-	view: ADTView<any, any>,
-	validateModelOperation(handler: (model: any) => ValidationResponse): ValidationResponse,
-	build(action: ModelAction, params: any[], preUpdateCb?: CallbackFunction, postUpdateCb?: CallbackFunction): Promise<void>,
-	render(): Promise<void>
-}
-
-export interface AC {
-	history: ControllerHistory,
-	toggleHistoryStatus(): void,
-	build(vm: ViewModel<any>, handler: Function): void,
-	start(): Promise<void>
-	clearHistory(): void
-	// + methods to change animation steps
-}
-
 export interface ADTView<M, VType> {
 	state: ViewModel<VType>,
 	viewModel: ViewModel<VType>,
@@ -167,8 +143,8 @@ export interface Trace {
 }
 
 export interface ViewFrame<M, V extends ADTView<M, any>> {
-	ViewModelController: VMC,
-	AnimationController: AC,
+	ViewModelController: ViewModelController<M, V>,
+	AnimationController: AnimationController,
 	component: ComponentType
 }
 

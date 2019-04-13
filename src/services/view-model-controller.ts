@@ -2,11 +2,10 @@ import {
 	ADTView,
 	CallbackFunction,
 	ModelAction,
-	ValidationResponse,
-	VMC
+	ValidationResponse
 } from 'src/services/interface';
 
-export class ViewModelController<M, V extends ADTView<M, any>> implements VMC {
+export class ViewModelController<M, V extends ADTView<M, any>> {
 	private readonly model: M;
 	public readonly view: V;
 
