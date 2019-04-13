@@ -6,6 +6,10 @@ import React, {
 	RefObject
 } from 'react';
 import Animate from 'react-move/Animate';
+import {
+	interpolate,
+	interpolateTransformSvg
+} from 'd3-interpolate';
 import { defer } from 'src/services/helpers';
 import { PromiseDefer } from 'src/services/interface';
 
@@ -33,7 +37,10 @@ const AnimatedComponent = (props: Props, ref: RefObject<object>) => {
 	}), [ref]);
 
 	return (
-		<Animate {...currentAnimAttrs}>
+		<Animate
+			interpolation={interpolateValue}
+			{...currentAnimAttrs}
+		>
 			{attrs => React.cloneElement(props.children, { attrs, nodeRef: ref })}
 		</Animate>
 	);
@@ -88,4 +95,12 @@ function calcNewInternalAnimAttrs(newAttrs: any, promiseDefer: PromiseDefer) {
 	}
 
 	return newAnimAttrs;
+}
+
+function interpolateValue(begValue, endValue, attr) {
+	if (attr === 'transform') {
+		return interpolateTransformSvg(begValue, endValue)
+	}
+
+	return interpolate(begValue, endValue)
 }

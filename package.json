@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "~16.8.4",
-    "react-dom": "~16.8.4",
-    "react-move": "2.8.0",
-    "react-router-dom": "~5.0.0",
+    "d3-interpolate": "1.3.2",
+    "react": "16.8.4",
+    "react-dom": "16.8.4",
+    "react-move": "5.2.1",
+    "react-router-dom": "5.0.0",
     "react-scripts-ts": "4.0.8",
     "whatwg-fetch": "3.0.0"
   },
