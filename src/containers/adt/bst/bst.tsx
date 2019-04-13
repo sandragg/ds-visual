@@ -1,23 +1,15 @@
-import * as React from 'react';
-import {
-	ModelAction,
-	Point,
-	ViewModel,
-	NodeViewModel,
-	AnimatedNode,
-} from 'src/services/interface';
-import { animateQueue, getById } from 'src/services/helpers';
-import { bindTracker } from 'src/services/tracker';
-import { View } from 'src/containers/view';
-import {
-	BST,
-	BstTrackedItems,
-	BstRef,
-	NodeRef
-} from 'src/data-structures/bst';
-
-// @ts-ignore
-export class BSTView extends View<BstRef<VType>, NodeRef<VType>, VType> {
+// import * as React from 'react';
+// import {
+// 	ModelAction,
+// } from 'src/services/interface';
+// import { View } from 'src/containers/view';
+// import {
+// 	BstRef,
+// 	NodeRef
+// } from 'src/data-structures/bst';
+//
+//
+// export class BSTView extends View<BstRef<VType>, NodeRef<VType>, VType> {
 	// /**
 	//  * Initial coordinates for structure view.
 	//  * @protected
@@ -184,15 +176,15 @@ export class BSTView extends View<BstRef<VType>, NodeRef<VType>, VType> {
 	//
 	// applyViewModel(): void {
 	// }
-}
+// }
 
-/**
- * Interface for working with BST structure.
- */
-export const BstInterface: ModelAction[] = [
-	{
-		name: 'Insert',
-		method: 'insert',
-		mutable: true
-	}
-];
+// /**
+//  * Interface for working with BST structure.
+//  */
+// export const BstInterface: ModelAction[] = [
+// 	{
+// 		name: 'Insert',
+// 		method: 'insert',
+// 		mutable: true
+// 	}
+// ];
