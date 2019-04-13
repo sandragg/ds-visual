@@ -1,25 +1,21 @@
 import {
 	ArrowParams,
 	Point,
-	CallbackFunction,
 	PromiseDefer,
-	PromiseStatus,
-	AnimationHistoryStep
+	PromiseWithStatus,
+	PromiseCallback
 } from './interface';
-import {
-	PROMISE_STATUSES
-} from './constants';
-import { nodeAnimationStates } from 'src/services/animation-style';
+import { PromiseStatus } from './constants';
 
 /**
  * Wrapper extends the promise with the current status property.
  * @param promise
  */
-export function StatusPromise(promise: Promise<any>): PromiseStatus<any> {
-	const extended: any = promise;
-	extended.status = PROMISE_STATUSES.PENDING;
-	extended.then(() => extended.status = PROMISE_STATUSES.RESOLVED)
-			.catch(() => extended.status = PROMISE_STATUSES.REJECTED);
+export function StatusPromise(promise: Promise<any>): PromiseWithStatus<any> {
+	const extended = promise as PromiseWithStatus<any>;
+	extended.status = PromiseStatus.pending;
+	extended.then(() => extended.status = PromiseStatus.resolved)
+			.catch(() => extended.status = PromiseStatus.rejected);
 
 	return extended;
 }
@@ -27,38 +23,19 @@ export function StatusPromise(promise: Promise<any>): PromiseStatus<any> {
 /**
  *  Create a deferred promise.
  */
-export function defer(): PromiseDefer {
+export function defer(cb?: PromiseCallback): PromiseDefer {
 	const deferred: any = {};
 
-	deferred.promise = new Promise(
-	(resolve: CallbackFunction, reject: CallbackFunction) => {
+	deferred.promise = StatusPromise(new Promise(
+	(resolve, reject) => {
 			deferred.resolve = resolve;
 			deferred.reject = reject;
-		}
-	);
 
-	return deferred;
-}
-
-/**
- * Animate queue nodes consistently.
- * @param queue
- */
-export function animateQueue(queue: AnimationHistoryStep[]): PromiseDefer {
-	const deferred: any = defer();
-	deferred.promise = StatusPromise(deferred.promise);
-
-	const queuePromise: Promise<any> = new Promise(
-			async (resolve: CallbackFunction, reject: CallbackFunction) => {
-			for (const { ref, attrs, action } of queue) {
-				if (deferred.promise.status === PROMISE_STATUSES.REJECTED) {
-					reject();
-				}
-				ref.current && await ref.current.animate([ attrs, ...nodeAnimationStates[action] ]);
+			if (typeof cb === 'function') {
+				cb(resolve, reject);
 			}
-			deferred.resolve();
 		}
-	);
+	));
 
 	return deferred;
 }

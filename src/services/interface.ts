@@ -7,6 +7,7 @@ import {
 	ArrowType,
 	Direction,
 	FieldType,
+	PromiseStatus,
 	TrackedActions
 } from 'src/services/constants';
 import { HashMap } from 'react-move';
@@ -36,14 +37,16 @@ export interface ArrowParams {
     length: number
 }
 
-export interface PromiseDefer {
-	promise: Promise<any>,
-	resolve: CallbackFunction,
-	reject: CallbackFunction
+export type PromiseCallback<T = any> = (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void;
+
+export interface PromiseDefer<T = {}> {
+	promise: PromiseWithStatus<T>,
+	resolve: (value?: T | PromiseLike<T>) => void,
+	reject: (reason?: any) => void
 }
 
-export interface PromiseStatus<P> extends Promise<P> {
-	status: string
+export interface PromiseWithStatus<T> extends Promise<T> {
+	status: PromiseStatus
 }
 
 // @ts-ignore TODO how to fix????

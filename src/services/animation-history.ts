@@ -29,8 +29,8 @@ export class AnimationHistory {
 	 * @param end
 	 */
 	public *[Symbol.iterator](begin?: number, end?: number): Iterator<ElementAnimationStep> {
-		begin = begin === undefined || !this.validatePosition(begin) ? 0 : begin;
-		end = end === undefined || !this.validatePosition(end) ? this.history.length : end;
+		begin = this.validatePosition(begin) ? begin : 0;
+		end = this.validatePosition(end) ? end : this.history.length;
 
 		const isReverse = begin > end;
 		let historyStep: AnimationHistoryStep;
@@ -87,7 +87,7 @@ export class AnimationHistory {
 	 * @param isReverse
 	 */
 	private isEnd(begin: number, end: number, isReverse: boolean): boolean {
-		return isReverse ? begin > end : begin < end;
+		return isReverse ? begin >= end : begin <= end;
 	}
 	/**
 	 * Check if the position is in range.

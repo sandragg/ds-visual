@@ -43,8 +43,14 @@ export class Frame<M, V extends View<M, any>> {
 		return (
 			<section className="frame">
 				<header className="frame__header">
-					<Breadcrumbs chain={['stack', 'array']} />
-					<AnimationControl className="frame__controls" />
+					{title}
+					<AnimationControl className="frame__controls"
+            onBack={() => this.AnimationController.rewind(this.AnimationController.activeStep - 1)}
+            onForward={() => this.AnimationController.rewind(this.AnimationController.activeStep + 1)}
+						onPlay={this.AnimationController.play}
+						onPause={this.AnimationController.pause}
+						onRewind={this.AnimationController.rewind}
+					/>
 				</header>
 				<Canvas>
 					<StructureView
