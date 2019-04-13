@@ -121,6 +121,7 @@ export abstract class View<M, VType>
 		return arrows.map(arrow => (
 				<Animated
 						key={arrow.id}
+						id={arrow.id}
 						ref={arrow.ref}
 						animationsAttrs={{
 							start: {
@@ -147,6 +148,7 @@ export abstract class View<M, VType>
 		return nodes.map(node => (
 				<Animated
 						key={node.id}
+						id={node.id}
 						ref={node.ref}
 						animationsAttrs={{
 							start: {
@@ -158,7 +160,8 @@ export abstract class View<M, VType>
 							update: {
 								...nodeAnimationStates[TrackedActions.default],
 								x: [node.coords.x],
-								y: [node.coords.y]
+								y: [node.coords.y],
+								value: node.value
 							}
 						}}
 				>

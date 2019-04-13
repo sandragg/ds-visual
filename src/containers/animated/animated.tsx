@@ -14,6 +14,7 @@ import { defer } from 'src/services/helpers';
 import { PromiseDefer } from 'src/services/interface';
 
 interface Props {
+	id: number | string,
 	children: JSX.Element,
 	animationsAttrs: any
 }
@@ -25,6 +26,7 @@ const AnimatedComponent = (props: Props, ref: RefObject<object>) => {
 	const currentAnimAttrs = useCurrentAnimAttrs(externalAnimAttrs, internalAnimAttrs);
 
 	useImperativeHandle(ref, () => ({
+		id: props.id,
 		node: ref.current,
 		animate: (newAnimAttrs: any): Promise<any> => {
 			promiseDefer.current = defer();

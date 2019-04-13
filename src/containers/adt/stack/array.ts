@@ -137,8 +137,8 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 	}
 
 	protected buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
-                                 existedArrowId?: number ): ArrowViewModel {
-		const id = existedArrowId || idCounter++;
+                                 existedArrowId?: number | string): ArrowViewModel {
+		const id = existedArrowId || `up${idCounter++}`;
 		const [ outCoords, inCoords ] = this.getCursorCoords(
 			nodeVM ? nodeVM.id : -1
 		);

@@ -124,6 +124,7 @@ export interface HistoryStep {
 
 interface AnimatedElement {
 	id: number | string,
+	node: SVGGElement,
 	animate(animAttrs: any): Promise<any>
 }
 
