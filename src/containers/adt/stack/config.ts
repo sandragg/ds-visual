@@ -17,7 +17,8 @@ const config: ADTConfig = {
 		{
 			name: 'array',
 			model: Array.Stack,
-			trackedProps: Array.StackTrackedProps,
+			trackedProps: Array.trackedProps,
+			trackHandler: Array.onTrack,
 			view: ArrayView
 		}
 	]

@@ -1,34 +1,39 @@
-import React, { MutableRefObject } from 'react';
-import {
-	AC, VMC,
-	ADTView,
-	ViewFrame,
-	TrackedClassItem
-} from 'src/services/interface';
+import React, {
+	MutableRefObject,
+	ReactNode,
+	FunctionComponent
+} from 'react';
+import { VMC } from 'src/services/interface';
 import { Canvas } from 'src/components/canvas';
 import { bindTracker } from 'src/services/tracker';
 import { ViewModelController } from 'src/services/view-model-controller';
 import { AnimationController } from 'src/services/animation-controller';
 import { AnimationControl } from 'src/components/animation-control';
-import { Breadcrumbs } from 'src/components/breadcrumbs';
+import { AbstractionConfig } from 'src/containers/adt';
+import './frame.css';
+import { View } from 'src/containers/view';
 
-export class Frame<M, V extends ADTView<M, any>> implements ViewFrame<M, V> {
+export interface FrameProps {
+	title: ReactNode
+}
+
+export class Frame<M, V extends View<M, any>> {
 
 	public ViewModelController: VMC;
-	public AnimationController: AC;
+	public AnimationController: AnimationController;
 
 	private model: M;
 	private View: V;
-	private viewRef: MutableRefObject<V> = React.createRef();
+	private viewRef: MutableRefObject<any> = React.createRef();
 
-	constructor(Model: new () => M, trackedItems: TrackedClassItem[], View: any) {
+	constructor(config: AbstractionConfig) {
 		this.AnimationController = new AnimationController();
 
-		this.View = View;
+		this.View = config.view;
 		this.model = bindTracker(
-				new Model(),
-				trackedItems,
-				View.onTrack.bind(null, this.AnimationController.history)
+				new config.model(),
+				config.trackedProps,
+				config.trackHandler(this.AnimationController.trace)
 		);
 
 		this.component = this.component.bind(this);

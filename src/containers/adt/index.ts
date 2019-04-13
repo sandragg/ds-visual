@@ -1,9 +1,9 @@
 import {
 	ModelAction,
+	Trace,
 	TrackedClassItem,
 	ValidationResponse
 } from 'src/services/interface';
-import { View } from 'src/containers/view';
 
 export interface ADTConfig {
 	id: number,
@@ -16,7 +16,8 @@ export interface ADTConfig {
 
 export interface AbstractionConfig {
 	name: string,
-	model: new () => object,
+	model: any,
 	trackedProps: TrackedClassItem[],
-	view: typeof View
+	trackHandler: (trace: Trace) => (res: any, args: any[], opt: TrackedClassItem, prevRes?: any) => void,
+	view: any
 }

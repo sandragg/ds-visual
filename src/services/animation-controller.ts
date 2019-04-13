@@ -1,28 +1,52 @@
 import {
-	AC,
-	ControllerHistory,
+	Trace,
+	AnimationHistoryStep,
+	ElementAnimationStep,
+	HistoryStep,
+	PromiseDefer,
 	ViewModel
 } from 'src/services/interface';
-import { Tracer } from 'src/services/tracer';
-import { animateQueue } from 'src/services/helpers';
+import { defer } from 'src/services/helpers';
+import { nodeAnimationStates } from 'src/services/animation-style';
+import { PromiseStatus } from 'src/services/constants';
+import { AnimationHistory } from 'src/services/animation-history';
+import { History } from 'src/services/history';
 
-export class AnimationController implements AC {
+/**
+ *
+ */
+export class AnimationController {
 
-	private _history: ControllerHistory = {
-		traces: new Tracer(),
+	public trace: Trace = {
+		history: new History(),
 		isUpdating: false
 	};
-
-	get history(): ControllerHistory {
-		return this._history;
-	}
+	public animationTrace = new AnimationHistory();
+	private activeAnimation: PromiseDefer = null;
+	public activeStep: number = 0;
 
 	constructor() {
 		this.toggleHistoryStatus = this.toggleHistoryStatus.bind(this);
+		this.play = this.play.bind(this);
+		this.pause = this.pause.bind(this);
+		this.rewind = this.rewind.bind(this);
 	}
 
 	public toggleHistoryStatus(): void {
-		this._history.isUpdating = !this._history.isUpdating;
+		this.trace.isUpdating = !this.trace.isUpdating;
+	}
+	// TODO REFACTOR!
+	public build(vm: ViewModel<any>,
+               handler: (vm: ViewModel<any>, step: HistoryStep, hist?: AnimationHistoryStep[]) => AnimationHistoryStep[]): void {
+		this.animationTrace.history = this.trace.history.stack.reduce(
+			(res, step) => {
+				const steps = handler(vm, step, res);
+				res.push(...steps);
+				return res;
+			},
+			[]
+		);
+		console.log('animationHistory', this.animationTrace.history);
 	}
 
 	public build(vm: ViewModel<any>, handler: Function): void {

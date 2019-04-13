@@ -2,17 +2,12 @@ import React from 'react';
 import {
 	AnimationHistoryStep,
 	ArrowViewModel,
-	ControllerHistory,
 	HistoryStep,
 	NodeViewModel,
 	Point,
-	TrackedClassItem,
 	ViewModel
 } from 'src/services/interface';
-import {
-	areObjectsEqual,
-	calcArrowMatrix
-} from 'src/services/helpers';
+import { calcArrowMatrix } from 'src/services/helpers';
 import {
 	ArrowType,
 	CursorOptions,
@@ -26,42 +21,6 @@ import { ArrayElementFactory } from 'src/services/node-factory';
 let idCounter: number = 1;
 
 export class ArrayView<VType> extends View<Stack<VType>, VType> {
-
-	public static onTrack(history: ControllerHistory,
-                        result: any,
-                        args: any[],
-                        [prop, action]: TrackedClassItem,
-                        prevResult: any): void {
-		if (!history.isUpdating) {
-			return;
-		}
-
-		const prevStep = history.traces.top();
-		const isChanged = arguments.length === 5;
-		let id;
-		let opts;
-		let attrs;
-
-		if (prop === 'up') {
-			id = prop;
-			opts = isChanged ? TrackedActions.change : TrackedActions.select;
-			attrs = { 'up': isChanged ? [prevResult, result] : result };
-		}
-		else {
-			id = Number(args[0]);
-			opts = isChanged ? TrackedActions.change : TrackedActions.select;
-			attrs = isChanged ? { 'value': [prevResult || '', result] } : {};
-		}
-
-		if (
-				!prevStep
-				|| prevStep.id !== id
-				|| prevStep.opts !== opts
-				|| !areObjectsEqual(prevStep.attrs, attrs)
-		) {
-			history.traces.push({ id, opts, attrs });
-		}
-	}
 
 	protected Node = new ArrayElementFactory([FieldType.value]);
 

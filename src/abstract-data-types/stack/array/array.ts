@@ -1,6 +1,3 @@
-import { TrackedClassItem } from 'src/services/interface';
-import { TrackedActions } from 'src/services/constants';
-
 export class Stack<VType> implements ADTStack<VType> {
 
 	public static readonly OUT_OF_DOMAIN: number = -1;
@@ -22,7 +19,7 @@ export class Stack<VType> implements ADTStack<VType> {
 			configurable: true
 		});
 
-		this.stack = new Array(Stack.STACK_SIZE);
+		this.stack = new Array(Stack.STACK_SIZE).fill(null);
 		this.reset();
 	}
 
@@ -54,8 +51,3 @@ export class Stack<VType> implements ADTStack<VType> {
 		this.up = Stack.OUT_OF_DOMAIN;
 	}
 }
-
-export const StackTrackedProps: TrackedClassItem[] = [
-	['up', TrackedActions.select],
-	['stack', TrackedActions.select]
-];
