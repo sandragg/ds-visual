@@ -1,12 +1,11 @@
 import {
 	RefObject,
 	ComponentType,
-	ReactNode
+	ReactNode,
+	FunctionComponent
 } from 'react';
 import {
 	ArrowType,
-	Direction,
-	FieldType,
 	PromiseStatus,
 	TrackedActions
 } from 'src/services/constants';
@@ -61,7 +60,7 @@ export interface AnimatedNode {
 
 export interface NodeViewModel<VType> {
 	id: number,
-	ref: RefObject<HTMLElement>
+	ref: RefObject<AnimatedElement>
 	value: VType,
 	coords: Point,
 	inArrows?: number[],
@@ -97,12 +96,11 @@ export interface ModelAction {
 
 // TODO add getFieldCoords method
 export interface NodeFactory {
-	direction: Direction,
-	fields: FieldType[],
-	width: number,
-	height: number,
-	component: ComponentType,
-	nodeCoords(index: number): Point
+	readonly width: number,
+	readonly height: number,
+	readonly offset: number,
+	component: FunctionComponent<NodeProps | object>,
+	getNodeCoords(index: number): Point
 }
 
 export interface NodeProps {

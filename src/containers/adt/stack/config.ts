@@ -3,9 +3,10 @@ import {
 	ValidationResponse
 } from 'src/services/interface';
 import { StackInterface } from './interface';
-import { ArrayView } from './array';
-import { Array } from 'src/abstract-data-types/stack';
 import { ADTConfig } from 'src/containers/adt/index';
+import { Array } from 'src/abstract-data-types/stack';
+import { ArrayView } from './array';
+import { AbstractView } from './abstract';
 
 const config: ADTConfig = {
 	id: 3,
@@ -14,6 +15,13 @@ const config: ADTConfig = {
 	validateOperation,
 	deriveAndValidateParams,
 	abstractions: [
+		{
+			name: 'general',
+			model: Array.Stack,
+			trackedProps: Array.trackedProps,
+			trackHandler: Array.onTrack,
+			view: AbstractView
+		},
 		{
 			name: 'array',
 			model: Array.Stack,

@@ -1,50 +1,104 @@
 import React from 'react';
 import { Node } from 'src/components/node';
-import { RefField, ValueField } from 'src/components/node-fields';
+import {
+	RefField,
+	ValueField
+} from 'src/components/node-fields';
 import {
 	Direction,
 	FieldHeight,
 	FieldType,
 	FieldWidth
 } from 'src/services/constants';
-import { NodeFactory, NodeProps, Point } from 'src/services/interface';
+import {
+	NodeFactory,
+	NodeProps,
+	Point
+} from 'src/services/interface';
 
-class ArrayElementFactory implements NodeFactory {
-	public direction: Direction;
-	public fields: FieldType[];
-	public width: number;
-	public height: number;
+interface SubsequentNodeFactoryConfig {
+	sequence: {
+		direction: Direction,
+		reverse: boolean
+	},
+	node: {
+		fields: FieldType[],
+		direction: Direction,
+		offset: number
+	}
+}
 
-	constructor(fields: FieldType[], direction: Direction = Direction.horizontal) {
-		this.fields = fields;
-		this.direction = direction;
+const defaultConfig: SubsequentNodeFactoryConfig = {
+	sequence: {
+		direction: Direction.horizontal,
+		reverse: false
+	},
+	node: {
+		fields: [ FieldType.value ],
+		direction: Direction.horizontal,
+		offset: 0
+	}
+};
 
-		const [ width, height ] = calculateSize(fields, direction);
+class SubsequentNodeFactory implements NodeFactory{
+	public readonly config: SubsequentNodeFactoryConfig;
+	/* Node size */
+	public readonly width: number;
+	public readonly height: number;
+	public readonly offset: number;
+
+	private readonly sequenceDirection: Direction;
+	private readonly isSequenceReverse: boolean;
+	private readonly nodeDirection: Direction;
+	private readonly fields: FieldType[];
+
+	constructor(config: SubsequentNodeFactoryConfig = defaultConfig) {
+		const { sequence, node } = config;
+
+		this.config = config;
+		this.fields = node.fields;
+		this.nodeDirection = node.direction;
+		this.sequenceDirection = sequence.direction;
+		this.isSequenceReverse = sequence.reverse;
+
+		const [ width, height ] = calculateNodeSize(node.fields, node.direction);
 		this.width = width;
 		this.height = height;
+		this.offset = node.offset;
 
 		this.component = this.component.bind(this);
 	}
 
 	public component({ children, nodeRef, attrs }: NodeProps) {
-		const isHoriz = this.direction === Direction.horizontal;
-		let offset = 0;
+		const isHoriz = this.nodeDirection === Direction.horizontal;
+		let fieldOffset = 0;
 
 		return (
 			<Node
-				nodeRef={nodeRef}
-				attrs={attrs}
+					nodeRef={nodeRef}
+					attrs={attrs}
 			>
 				{
 					this.fields.map(field => {
-						const childrenAttrs = {
-							x: isHoriz ? offset : 0,
-							y: isHoriz ? 0 : offset,
-							width: !isHoriz && FieldWidth[FieldType.value],
-							fill: attrs.fill
-						};
+						let childrenAttrs;
 
-						offset += isHoriz ? FieldWidth[field] : FieldHeight;
+						if (isHoriz) {
+							childrenAttrs = {
+								x: fieldOffset,
+								y: 0,
+								fill: attrs.fill
+							};
+							fieldOffset += FieldWidth[field];
+						}
+						else {
+							childrenAttrs = {
+								x: 0,
+								y: fieldOffset,
+								width: FieldWidth[FieldType.value],
+								fill: attrs.fill
+							};
+							fieldOffset += FieldHeight;
+						}
 
 						return (
 							field === FieldType.value
@@ -57,17 +111,18 @@ class ArrayElementFactory implements NodeFactory {
 		)
 	}
 
-	public nodeCoords(index: number): Point {
-		const isHoriz = this.direction === Direction.horizontal;
+	public getNodeCoords(index: number): Point {
+		const isHoriz = this.sequenceDirection === Direction.horizontal;
+		const k = this.isSequenceReverse ? -1 : 1;
 
 		return {
-			x: isHoriz ? index * this.width : 0,
-			y: isHoriz ? 0 : index * this.height
+			x: isHoriz ? k * index * (this.width + this.offset) : 0,
+			y: isHoriz ? 0 : k * index * (this.height + this.offset)
 		}
 	}
 }
 
-function calculateSize(fields: FieldType[], direction: Direction): number[] {
+function calculateNodeSize(fields: FieldType[], direction: Direction): number[] {
 	return direction === Direction.vertical
 			? [ FieldWidth[FieldType.value], fields.length * FieldHeight ]
 			: [
@@ -76,4 +131,7 @@ function calculateSize(fields: FieldType[], direction: Direction): number[] {
 			];
 }
 
-export { ArrayElementFactory };
+export {
+	SubsequentNodeFactory,
+	SubsequentNodeFactoryConfig
+};

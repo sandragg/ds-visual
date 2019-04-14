@@ -11,18 +11,34 @@ import { calcArrowMatrix } from 'src/services/helpers';
 import {
 	ArrowType,
 	CursorOptions,
+	Direction,
 	FieldType,
 	TrackedActions
 } from 'src/services/constants';
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
-import { ArrayElementFactory } from 'src/services/node-factory';
+import {
+	SubsequentNodeFactory,
+	SubsequentNodeFactoryConfig
+} from 'src/services/node-factory';
 
 let idCounter: number = 1;
 
+const nodeFactoryConfig: SubsequentNodeFactoryConfig = {
+	sequence: {
+		direction: Direction.horizontal,
+		reverse: false
+	},
+	node: {
+		fields: [ FieldType.value ],
+		direction: Direction.horizontal,
+		offset: 0
+	}
+};
+
 export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
-	protected Node = new ArrayElementFactory([FieldType.value]);
+	protected Node = new SubsequentNodeFactory(nodeFactoryConfig);
 
 	protected readonly INITIAL_COORDS: Point = {
 		x: this.Node.width,
@@ -44,7 +60,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 		nodes[0] = this.buildNodeViewModel([stack[0], 0]);
 		for (let i = 1; i < Stack.STACK_SIZE; i++) {
-			nodes[i] = this.buildNodeViewModel([stack[i], i], nodes[i - 1]);
+			nodes[i] = this.buildNodeViewModel([stack[i], i]);
 		}
 		arrows[0] = this.buildCursorViewModel(nodes[up], cursorVM && cursorVM.id);
 	}
@@ -96,7 +112,9 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 			else if (isChange) {
 				const prevState = hist[prevStateIndex];
 
+				// @ts-ignore
 				prevState.attrs = this.mapToAnimateAttrs({
+					// @ts-ignore
 					...prevState.attrs,
 					...getAttrs(attrs, true)
 				});
@@ -119,20 +137,12 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		};
 	}
 
-	protected buildNodeViewModel([ value, id ]: [VType, number],
-                               parentVM?: NodeViewModel<VType>): NodeViewModel<VType> {
-		const coords = parentVM ? parentVM.coords : null;
-
+	protected buildNodeViewModel([ value, id ]: [VType, number]): NodeViewModel<VType> {
 		return {
 			id,
 			ref: React.createRef(),
 			value,
-			coords: !parentVM
-				? { x: 0, y: 0 }
-				: {
-					x: coords.x + this.Node.width,
-					y: coords.y
-				}
+			coords: this.Node.getNodeCoords(id)
 		};
 	}
 
@@ -160,7 +170,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 		nodes[0] = this.buildNodeViewModel([initialValue, 0]);
 		for (let i = 1; i < Stack.STACK_SIZE; i++) {
-			nodes[i] = this.buildNodeViewModel([initialValue, i], nodes[i - 1]);
+			nodes[i] = this.buildNodeViewModel([initialValue, i]);
 		}
 		arrows[0] = this.buildCursorViewModel(null, cursorVM && cursorVM.id);
 
@@ -184,7 +194,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 	private getCursorCoords(index: number): Point[] {
 		const inNodeCoords = index === -1
 				? { x: -this.Node.width, y: 0 }
-				: this.Node.nodeCoords(index);
+				: this.Node.getNodeCoords(index);
 
 		const inPoint: Point = {
 			x: inNodeCoords.x + this.Node.width / 2,
