@@ -7,7 +7,10 @@ import {
 	Point,
 	ViewModel
 } from 'src/services/interface';
-import { calcArrowMatrix } from 'src/services/helpers';
+import {
+	calcArrowMatrix,
+	filterElementAttrs
+} from 'src/services/helpers';
 import {
 	ArrowType,
 	CursorOptions,
@@ -62,27 +65,9 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		arrows[0] = this.buildCursorViewModel(nodes[up], cursorVM && cursorVM.id);
 	}
 
+	// TODO revise!!!
 	public buildAnimationStep() {
 		const lastState = {};
-
-		function getAttrs(attrs: object, prevAttrs: boolean): object {
-			let value;
-			return Object.keys(attrs).reduce(
-				(res, key) => {
-					value = attrs[key];
-
-					if (Array.isArray(value)) {
-						res[key] = value[prevAttrs ? 0 : 1];
-					}
-					else if (!prevAttrs) {
-						res[key] = value;
-					}
-
-					return res;
-				},
-				{}
-			);
-		}
 
 		return (vm: ViewModel<VType>, { id, opts, attrs }: HistoryStep, hist?: AnimationHistoryStep[]): AnimationHistoryStep[] => {
 			const itemVM = id === 'up'
@@ -98,7 +83,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 					action: TrackedActions.default,
 					attrs: this.mapToAnimateAttrs(
 						isChange
-							? getAttrs(attrs, true)
+							? filterElementAttrs(attrs, true)
 							: attrs
 					),
 					previousState: prevStateIndex
@@ -113,7 +98,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 				prevState.attrs = this.mapToAnimateAttrs({
 					// @ts-ignore
 					...prevState.attrs,
-					...getAttrs(attrs, true)
+					...filterElementAttrs(attrs, true)
 				});
 			}
 
@@ -122,7 +107,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 				action: opts,
 				attrs: this.mapToAnimateAttrs(
 					isChange
-						? getAttrs(attrs, false)
+						? filterElementAttrs(attrs, false)
 						: attrs
 				),
 				previousState: prevStateIndex

@@ -6,6 +6,7 @@ import {
 	PromiseCallback
 } from './interface';
 import { PromiseStatus } from './constants';
+import { HashMap } from 'react-move';
 
 /**
  * Wrapper extends the promise with the current status property.
@@ -129,4 +130,23 @@ export function areObjectsEqual(obj1, obj2): boolean {
 	const obj2Keys = Object.keys(obj2);
 
 	return obj1Keys.length === obj2Keys.length && obj1Keys.every(key => Object.is(obj1[key], obj2[key]));
+}
+
+export function filterElementAttrs(attrs: HashMap, prevAttrs: boolean): HashMap {
+	let value;
+
+	return Object.keys(attrs).reduce(
+			(res, key) => {
+				value = attrs[key];
+
+				if (Array.isArray(value)) {
+					res[key] = value[prevAttrs ? 0 : 1];
+				} else if (!prevAttrs) {
+					res[key] = value;
+				}
+
+				return res;
+			},
+			{}
+	);
 }
