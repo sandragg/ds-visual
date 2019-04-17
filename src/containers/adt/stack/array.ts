@@ -41,14 +41,17 @@ const nodeFactoryConfig: SubsequentNodeFactoryConfig = {
 
 export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
-	public state = this.buildInitialViewModel();
-
 	protected Node = new SubsequentNodeFactory(nodeFactoryConfig);
 
 	protected readonly INITIAL_COORDS: Point = {
 		x: this.Node.width,
 		y: CursorOptions.length + CursorOptions.offset
 	};
+
+	constructor(props) {
+		super(props);
+		this.state = this.buildInitialViewModel();
+	}
 
 	// TODO NEED REFACTORING! Currently it recalculates entire model every time.
 	public buildViewModel(model: Stack<VType>): void {

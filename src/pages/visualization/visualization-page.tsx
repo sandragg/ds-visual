@@ -80,7 +80,6 @@ export const VisualizationPage = (props: { config: ADTConfig }) => {
 								outputRef.current.hidden = true;
 								inputRef.current.value = '';
 
-								// @ts-ignore
 								actionHandler(frame.current, action, params, config.validateOperation, showResult);
 							}}
 						>

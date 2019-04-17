@@ -111,7 +111,7 @@ export interface NodeProps {
 
 export interface HistoryStep {
 	id: number | string,
-	attrs: object,
+	attrs: HashMap,
 	opts?: TrackedActions
 }
 

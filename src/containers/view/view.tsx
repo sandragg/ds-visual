@@ -50,12 +50,12 @@ export abstract class View<M, VType>
 	/**
 	 * Node component template is defined in instance of the derived class through a factory config.
 	 */
-	protected abstract Node: NodeFactory;
+	protected Node: NodeFactory;
 	/**
 	 * Render type indicates whether the render happens on component mount, pre-render operation
 	 * or on apply a new view model. Type affects element style on first render.
 	 */
-	private renderType: RenderType = RenderType.init;
+	protected renderType: RenderType = RenderType.init;
 	/**
 	 * After initial render we should switch on default type for subsequent renders.
 	 */
