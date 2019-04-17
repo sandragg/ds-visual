@@ -160,6 +160,10 @@ export class AnimationController {
 	 */
 	public rewind(stepTo: number): Promise<any> {
 		console.log('rewind');
+		if (!this.animationTrace.history.length) {
+			return Promise.resolve();
+		}
+
 		const { length } = this.animationTrace.history;
 		const stepFrom = this.activeStep;
 
@@ -193,25 +197,30 @@ export class AnimationController {
 				element = this.animationTrace.elementIterator(element).next().value || element;
 			}
 			id = element.ref.current.id;
-			rewindStep[id] = this.mergeElementAnimationSteps(rewindStep[id], element);
+			rewindStep[id] = this.mergeElementAnimationSteps(rewindStep[id], element, isReverse);
 		}
 
-		return Object.keys(rewindStep).map(key => rewindStep[key]);
+		return Object.values(rewindStep);
 	}
 	/**
 	 * Merge element next state to the previous.
 	 * @param prevStep
 	 * @param nextStep
+	 * @param isReverse
 	 */
 	private mergeElementAnimationSteps(prevStep: ElementAnimationStep,
-                                     nextStep: ElementAnimationStep): ElementAnimationStep {
+                                     nextStep: ElementAnimationStep,
+                                     isReverse: boolean): ElementAnimationStep {
 		if (prevStep) {
-			prevStep.action = nextStep.action; // TODO should be condition for a step action: new<=>delete default<=>select,change
 			Object.assign(prevStep.attrs, nextStep.attrs);
 		}
 		else {
-			prevStep = Object.assign({}, nextStep);
+			prevStep = {
+				...nextStep,
+				attrs: { ...nextStep.attrs }
+			};
 		}
+		prevStep.action = isReverse ? getReverseAction(nextStep.action) : nextStep.action;
 
 		return prevStep;
 	}
@@ -223,5 +232,14 @@ export class AnimationController {
 	 */
 	private startAnimation({ ref, attrs, action }: ElementAnimationStep): Promise<any> {
 		return ref.current.animate([ attrs, animationStyles[action] ]);
+	}
+}
+
+function getReverseAction(action: TrackedActions): TrackedActions {
+	switch (action) {
+		case TrackedActions.new:
+			return TrackedActions.delete;
+		default:
+			return TrackedActions.default;
 	}
 }

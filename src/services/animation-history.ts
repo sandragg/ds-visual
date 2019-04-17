@@ -67,7 +67,7 @@ export class AnimationHistory {
 		let prevStepIndex = element.previousState;
 		let elementPrevStep: AnimationHistoryStep;
 
-		while (prevStepIndex) {
+		while (prevStepIndex !== null) {
 			elementPrevStep = this.history[prevStepIndex];
 			if (Array.isArray(elementPrevStep)) {
 				elementPrevStep = elementPrevStep.find(elem => elem.ref.current.id === id);
