@@ -10,12 +10,19 @@ import {
 	ViewModel
 } from 'src/services/interface';
 import { calcArrowMatrix, getById, getNodeCenterPoint, } from 'src/services/helpers';
-import { arrowAnimationStates, nodeAnimationStates } from 'src/services/animation-style';
+import animationStyles from 'src/services/animation-style';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
 import { ArrowType, TrackedActions } from 'src/services/constants';
+import { IAnimateProps } from 'react-move/Animate';
 
 let idCounter: number = 1;
+
+const enum RenderType {
+	init,
+	prerender,
+	rerender
+}
 
 export abstract class View<M, VType>
 		extends Component<object, ViewModel<VType>>
@@ -34,6 +41,12 @@ export abstract class View<M, VType>
 	 */
 	protected readonly INITIAL_COORDS: Point = null;
 	protected abstract Node: NodeFactory;
+
+	protected abstract buildInitialViewModel(): ViewModel<VType>;
+
+	public componentDidMount(): void {
+		this.renderType = RenderType.rerender;
+	}
 
 	public render() {
 		return (
@@ -54,6 +67,14 @@ export abstract class View<M, VType>
 
 	public applyViewModel(cb?: CallbackFunction): void {
 		this.setState(this.viewModel, typeof cb === 'function' && cb);
+	}
+
+	public prerender(cb?: CallbackFunction): void {
+		this.renderType = RenderType.prerender;
+		this.setState(this.viewModel, () => {
+			this.renderType = RenderType.rerender;
+			typeof cb === 'function' && cb();
+		});
 	}
 	/**
 	 * Build Node view model.
@@ -106,45 +127,58 @@ export abstract class View<M, VType>
 	 */
 	protected build(): ReactNode[] {
 		const { arrows, nodes } = this.state;
+		const attrs = getAnimationAttrsByRenderType(this.renderType);
 
 		return [
-			this.buildArrowComponents(arrows),
-			this.buildNodeComponents(nodes)
+			this.buildArrowComponents(arrows, attrs),
+			this.buildNodeComponents(nodes, attrs)
 		];
 	}
+
 	/**
 	 * Build array of Animated Arrow components.
 	 * @protected
 	 * @param arrows
+	 * @param attrs
 	 */
-	protected buildArrowComponents(arrows: ArrowViewModel[]): JSX.Element[] { // TODO mb squash buildArrow and buildNode ???
-		return arrows.map(arrow => (
+	protected buildArrowComponents(arrows: ArrowViewModel[], attrs: Partial<IAnimateProps>): JSX.Element[] {
+		const defaultStyle = animationStyles[TrackedActions.default];
+
+		return arrows.map(arrow => {
+			const transformMatrix = `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`;
+
+			return (
 				<Animated
-						key={arrow.id}
-						id={arrow.id}
-						ref={arrow.ref}
-						animationsAttrs={{
-							start: {
-								// opacity: 0,
-								// scale: 0,
-								transform: `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`
-							},
-							update: {
-								...arrowAnimationStates[TrackedActions.default][0],
-								transform: [`matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`]
-							}
-						}}
+					key={arrow.id}
+					id={arrow.id}
+					ref={arrow.ref}
+					animationsAttrs={{
+						start: {
+							...attrs.start,
+							fill: defaultStyle.fill,
+							transform: transformMatrix
+						},
+						update: attrs.update ? {
+							...defaultStyle,
+							transform: [transformMatrix]
+						} : null
+					}}
 				>
 					<Arrow outPoint={arrow.outCoords} inPoint={arrow.inCoords} type={arrow.type} />
 				</Animated>
-		))
+			);
+		});
 	}
+
 	/**
 	 * Build array of Animated Node components.
 	 * @protected
 	 * @param nodes
+	 * @param attrs
 	 */
-	protected buildNodeComponents(nodes: Array<NodeViewModel<VType>>): JSX.Element[] {
+	protected buildNodeComponents(nodes: Array<NodeViewModel<VType>>, attrs: Partial<IAnimateProps>): JSX.Element[] {
+		const defaultStyle = animationStyles[TrackedActions.default];
+
 		return nodes.map(node => (
 				<Animated
 						key={node.id}
@@ -152,20 +186,21 @@ export abstract class View<M, VType>
 						ref={node.ref}
 						animationsAttrs={{
 							start: {
-								// opacity: 0,
-								// scale: 0,
+								...attrs.start,
+								fill: defaultStyle.fill,
 								x: node.coords.x,
-								y: node.coords.y
+								y: node.coords.y,
+								value: node.value
 							},
-							update: {
-								...nodeAnimationStates[TrackedActions.default][0],
+							update: attrs.update ? {
+								...defaultStyle,
 								x: [node.coords.x],
 								y: [node.coords.y],
 								value: node.value
-							}
+							} : null
 						}}
 				>
-					<this.Node.component>{node.value}</this.Node.component>
+					<this.Node.component />
 				</Animated>
 		))
 	}
@@ -243,5 +278,17 @@ export abstract class View<M, VType>
 				nodes: [],
 				arrows: []
 		}
+	}
+}
+
+function getAnimationAttrsByRenderType(type: RenderType): Partial<IAnimateProps> {
+	const value = Number(type === RenderType.init);
+
+	return {
+		start: {
+			opacity: value,
+			scale: value
+		},
+		update: type !== RenderType.prerender
 	}
 }

@@ -7,8 +7,8 @@ import {
 	ViewModel
 } from 'src/services/interface';
 import { defer } from 'src/services/helpers';
-import { nodeAnimationStates } from 'src/services/animation-style';
-import { PromiseStatus } from 'src/services/constants';
+import animationStyles from 'src/services/animation-style';
+import { PromiseStatus, TrackedActions } from 'src/services/constants';
 import { AnimationHistory } from 'src/services/animation-history';
 import { History } from 'src/services/history';
 
@@ -222,6 +222,6 @@ export class AnimationController {
 	 * @param action
 	 */
 	private startAnimation({ ref, attrs, action }: ElementAnimationStep): Promise<any> {
-		return ref.current.animate([ attrs, ...nodeAnimationStates[action] ]); // TODO styles for arrows and nodes
+		return ref.current.animate([ attrs, animationStyles[action] ]);
 	}
 }
