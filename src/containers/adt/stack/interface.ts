@@ -4,7 +4,8 @@ export const StackInterface: ModelAction[] = [
 	{
 		name: 'Push',
 		method: 'push',
-		mutable: true
+		mutable: true,
+		prerender: true
 	},
 	{
 		name: 'Pop',

@@ -112,7 +112,7 @@ function actionHandler(frame: ViewFrame<any, any>,
 		.then(() => FrameVMC.build(action, params, FrameAC.toggleHistoryStatus))
 		.then(res => {
 			actionResultHandler(res);
-			return action.prerender && FrameVMC.render();
+			return action.prerender && FrameVMC.prerender();
 		})
 		.then(() => FrameAC.build(FrameVMC.view.state, FrameVMC.view.buildAnimationStep()))
 		.then(() => FrameAC.play())

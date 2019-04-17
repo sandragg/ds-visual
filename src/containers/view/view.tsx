@@ -9,7 +9,11 @@ import {
 	Point,
 	ViewModel
 } from 'src/services/interface';
-import { calcArrowMatrix, getById, getNodeCenterPoint, } from 'src/services/helpers';
+import {
+	calcArrowMatrix,
+	getById,
+	getNodeCenterPoint,
+} from 'src/services/helpers';
 import animationStyles from 'src/services/animation-style';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
@@ -21,7 +25,7 @@ let idCounter: number = 1;
 const enum RenderType {
 	init,
 	prerender,
-	rerender
+	default
 }
 
 export abstract class View<M, VType>
@@ -31,8 +35,11 @@ export abstract class View<M, VType>
 	 * View component state.
 	 * @public
 	 */
-	public state: ViewModel<VType> = this.getViewInitialState();
-
+	public state: ViewModel<VType>;
+	/**
+	 * Next calculated component state.
+	 * @public
+	 */
 	public viewModel: ViewModel<VType>;
 	/**
 	 * Initial coordinates for structure view.
@@ -40,12 +47,20 @@ export abstract class View<M, VType>
 	 * @readonly
 	 */
 	protected readonly INITIAL_COORDS: Point = null;
+	/**
+	 * Node component template is defined in instance of the derived class through a factory config.
+	 */
 	protected abstract Node: NodeFactory;
-
-	protected abstract buildInitialViewModel(): ViewModel<VType>;
-
+	/**
+	 * Render type indicates whether the render happens on component mount, pre-render operation
+	 * or on apply a new view model. Type affects element style on first render.
+	 */
+	private renderType: RenderType = RenderType.init;
+	/**
+	 * After initial render we should switch on default type for subsequent renders.
+	 */
 	public componentDidMount(): void {
-		this.renderType = RenderType.rerender;
+		this.renderType = RenderType.default;
 	}
 
 	public render() {
@@ -71,11 +86,14 @@ export abstract class View<M, VType>
 
 	public prerender(cb?: CallbackFunction): void {
 		this.renderType = RenderType.prerender;
+
 		this.setState(this.viewModel, () => {
-			this.renderType = RenderType.rerender;
+			this.renderType = RenderType.default;
 			typeof cb === 'function' && cb();
 		});
 	}
+
+	protected abstract buildInitialViewModel(): ViewModel<VType>;
 	/**
 	 * Build Node view model.
 	 * @protected
@@ -134,7 +152,6 @@ export abstract class View<M, VType>
 			this.buildNodeComponents(nodes, attrs)
 		];
 	}
-
 	/**
 	 * Build array of Animated Arrow components.
 	 * @protected
@@ -169,7 +186,6 @@ export abstract class View<M, VType>
 			);
 		});
 	}
-
 	/**
 	 * Build array of Animated Node components.
 	 * @protected
@@ -281,6 +297,12 @@ export abstract class View<M, VType>
 	}
 }
 
+/**
+ * Initial render: all elements are visible.
+ * Pre-render: new mounted elements are invisible, existed nodes don't update.
+ * Default render: update all elements.
+ * @param type
+ */
 function getAnimationAttrsByRenderType(type: RenderType): Partial<IAnimateProps> {
 	const value = Number(type === RenderType.init);
 

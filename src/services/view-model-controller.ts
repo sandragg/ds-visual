@@ -37,6 +37,12 @@ export class ViewModelController<M, V extends ADTView<M, any>> {
 		});
 	}
 
+	public prerender(): Promise<void> {
+		return new Promise(resolve => {
+			this.view.prerender(resolve);
+		});
+	}
+
 	private updateModel(action: string, params: any[], cb?: CallbackFunction): any {
 
 		typeof cb === 'function' && cb();
