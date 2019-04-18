@@ -18,7 +18,7 @@ export class AnimationHistory {
 	 * Reset the animation history.
 	 */
 	public reset(): void {
-		this.history = null;
+		this.history = [];
 	}
 	/**
 	 * Default iterator.

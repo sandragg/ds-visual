@@ -100,14 +100,16 @@ function actionHandler(frame: ViewFrame<any, any>,
 	const FrameAC = frame.AnimationController;
 	const FrameVMC = frame.ViewModelController;
 
+	FrameAC.reset();
+	const renderPromise = FrameVMC.render();
 	const { isValid, errorText } = FrameVMC.validateModelOperation(validateOperation(action.method));
+
 	if (!isValid) {
 		actionResultHandler(errorText);
 		return;
 	}
 
-	FrameAC.reset();
-	FrameVMC.render()
+	renderPromise
 		.then(() => FrameVMC.build(action, params, FrameAC.toggleHistoryStatus))
 		.then(res => {
 			actionResultHandler(res);

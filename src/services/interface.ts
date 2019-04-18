@@ -94,13 +94,13 @@ export interface ModelAction {
 	prerender?: boolean
 }
 
-// TODO add getFieldCoords method
 export interface NodeFactory {
 	readonly width: number,
 	readonly height: number,
 	readonly offset: number,
 	component: FunctionComponent<NodeProps | object>,
-	getNodeCoords(index: number): Point
+	getNodeCoords(index: number): Point,
+	getFieldCoords(nodeIndex: number, fieldKey: string): Point
 }
 
 export interface NodeProps {

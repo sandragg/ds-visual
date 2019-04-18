@@ -1,9 +1,6 @@
 import React from 'react';
 import { Node } from 'src/components/node';
-import {
-	RefField,
-	ValueField
-} from 'src/components/node-fields';
+import { RefField, ValueField } from 'src/components/node-fields';
 import {
 	Direction,
 	FieldHeight,
@@ -22,7 +19,7 @@ interface SubsequentNodeFactoryConfig {
 		reverse: boolean
 	},
 	node: {
-		fields: FieldType[],
+		fields: { [key: string]: FieldType },
 		direction: Direction,
 		offset: number
 	}
@@ -34,13 +31,15 @@ const defaultConfig: SubsequentNodeFactoryConfig = {
 		reverse: false
 	},
 	node: {
-		fields: [ FieldType.value ],
+		fields: {
+			value: FieldType.value
+		},
 		direction: Direction.horizontal,
 		offset: 0
 	}
 };
 
-class SubsequentNodeFactory implements NodeFactory{
+class SubsequentNodeFactory implements NodeFactory {
 	public readonly config: SubsequentNodeFactoryConfig;
 	/* Node size */
 	public readonly width: number;
@@ -50,18 +49,24 @@ class SubsequentNodeFactory implements NodeFactory{
 	private readonly sequenceDirection: Direction;
 	private readonly isSequenceReverse: boolean;
 	private readonly nodeDirection: Direction;
-	private readonly fields: FieldType[];
+	private readonly fields: FieldType[] = [];
+	private readonly keys: string[] = [];
 
 	constructor(config: SubsequentNodeFactoryConfig = defaultConfig) {
 		const { sequence, node } = config;
+		const { fields } = node;
 
 		this.config = config;
-		this.fields = node.fields;
 		this.nodeDirection = node.direction;
 		this.sequenceDirection = sequence.direction;
 		this.isSequenceReverse = sequence.reverse;
 
-		const [ width, height ] = calculateNodeSize(node.fields, node.direction);
+		for (let key in fields) {
+			this.keys.push(key);
+			this.fields.push(fields[key]);
+		}
+
+		const [ width, height ] = calculateNodeSize(this.fields, node.direction);
 		this.width = width;
 		this.height = height;
 		this.offset = node.offset;
@@ -119,6 +124,23 @@ class SubsequentNodeFactory implements NodeFactory{
 			x: isHoriz ? k * index * (this.width + this.offset) : 0,
 			y: isHoriz ? 0 : k * index * (this.height + this.offset)
 		}
+	}
+
+	public getFieldCoords(nodeIndex: number, fieldKey: string): Point {
+		const isHoriz = this.nodeDirection === Direction.horizontal;
+		const nodeCoords = this.getNodeCoords(nodeIndex);
+		const index = this.keys.indexOf(fieldKey);
+
+		if (!isHoriz) {
+			nodeCoords.y += FieldHeight * index;
+		}
+		else {
+			for (let i = 0; i < index; i++) {
+				nodeCoords.x += FieldWidth[this.fields[i]];
+			}
+		}
+
+		return nodeCoords;
 	}
 }
 

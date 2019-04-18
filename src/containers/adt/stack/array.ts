@@ -33,7 +33,9 @@ const nodeFactoryConfig: SubsequentNodeFactoryConfig = {
 		reverse: false
 	},
 	node: {
-		fields: [ FieldType.value ],
+		fields: {
+			value: FieldType.value
+		},
 		direction: Direction.horizontal,
 		offset: 0
 	}
