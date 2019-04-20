@@ -1,6 +1,6 @@
 import { Trace, TrackedClassItem } from 'src/services/interface';
 import { TrackedActions } from 'src/services/constants';
-import { areObjectsEqual } from 'src/services/helpers';
+import { areObjectsEqual } from 'src/utils/animation';
 
 /**
  * Model tracked properties (fields and methods).

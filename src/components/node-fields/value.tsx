@@ -4,12 +4,12 @@ import {
 	FieldWidth,
 	FieldType
 } from 'src/services/constants';
-import { calcNodeMatrix } from 'src/services/helpers';
+import { calculateNodeMatrix } from 'src/utils/positioning';
 
 export const ValueField = ({ children, attrs }) => {
 	const fieldWidth = FieldWidth[FieldType.value];
 	const matrix = useRef<number[]>(
-			calcNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
+		calculateNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
 	);
 
 	return (

@@ -6,7 +6,7 @@ import {
 	PromiseDefer,
 	ViewModel
 } from 'src/services/interface';
-import { defer } from 'src/services/helpers';
+import { defer } from 'src/utils/animation';
 import animationStyles from 'src/services/animation-style';
 import { PromiseStatus, TrackedActions } from 'src/services/constants';
 import { AnimationHistory } from 'src/services/animation-history';

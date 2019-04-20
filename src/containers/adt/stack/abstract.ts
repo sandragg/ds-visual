@@ -13,24 +13,24 @@ import {
 } from 'src/services/node-factory';
 import {
 	ArrowType,
-	CursorOptions,
+	Position,
 	Direction,
 	FieldType,
 	TrackedActions
 } from 'src/services/constants';
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
+import { filterElementAttrs } from 'src/utils/animation';
 import {
-	calcArrowMatrix,
-	filterElementAttrs
-} from 'src/services/helpers';
+	calculateArrowMatrix,
+	calculateCursorCoords
+} from 'src/utils/positioning';
 
 let idCounter: number = 1;
 
 const nodeFactoryConfig: SubsequentNodeFactoryConfig = {
 	sequence: {
-		direction: Direction.vertical,
-		reverse: true
+		position: Position.top
 	},
 	node: {
 		fields: {
@@ -146,19 +146,21 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 			return attrs;
 		}
 
-		const [ outPoint, inPoint ] = this.getCursorCoords(up);
+		const [ outPoint, inPoint ] = calculateCursorCoords(this.Node, up, Position.left);
 
 		return {
 			...other,
-			transform: [`matrix(${calcArrowMatrix(outPoint, inPoint).matrix})`]
+			transform: [`matrix(${calculateArrowMatrix(outPoint, inPoint).matrix})`]
 		}
 	}
 
 	private buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
                                existedArrowId?: number | string): ArrowViewModel {
 		const id = existedArrowId || `up${idCounter++}`;
-		const [ outCoords, inCoords ] = this.getCursorCoords(
-				nodeVM ? nodeVM.id : -1
+		const [ outCoords, inCoords ] = calculateCursorCoords(
+			this.Node,
+			nodeVM ? nodeVM.id : -1,
+			Position.left
 		);
 
 		return {
@@ -168,22 +170,5 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 			inCoords,
 			type: ArrowType.cursor
 		};
-	}
-
-	private getCursorCoords(index: number): Point[] {
-		const inNodeCoords = index === -1
-				? { x: 0, y: this.Node.height }
-				: this.Node.getNodeCoords(index);
-
-		const inPoint: Point = {
-			x: inNodeCoords.x - CursorOptions.offset,
-			y: inNodeCoords.y + this.Node.height / 2
-		};
-		const outPoint: Point = {
-			x: inPoint.x - CursorOptions.length,
-			y: inPoint.y
-		};
-
-		return [ outPoint, inPoint ];
 	}
 }

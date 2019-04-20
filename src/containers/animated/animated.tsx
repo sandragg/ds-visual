@@ -10,7 +10,7 @@ import {
 	interpolate,
 	interpolateTransformSvg
 } from 'd3-interpolate';
-import { defer } from 'src/services/helpers';
+import { defer } from 'src/utils/animation';
 import { PromiseDefer } from 'src/services/interface';
 
 interface Props {

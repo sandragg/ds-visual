@@ -7,13 +7,11 @@ import {
 	Point,
 	ViewModel
 } from 'src/services/interface';
-import {
-	calcArrowMatrix,
-	filterElementAttrs
-} from 'src/services/helpers';
+import { filterElementAttrs } from 'src/utils/animation';
 import {
 	ArrowType,
 	CursorOptions,
+	Position,
 	Direction,
 	FieldType,
 	TrackedActions
@@ -24,13 +22,16 @@ import {
 	SubsequentNodeFactory,
 	SubsequentNodeFactoryConfig
 } from 'src/services/node-factory';
+import {
+	calculateArrowMatrix,
+	calculateCursorCoords
+} from 'src/utils/positioning';
 
 let idCounter: number = 1;
 
 const nodeFactoryConfig: SubsequentNodeFactoryConfig = {
 	sequence: {
-		direction: Direction.horizontal,
-		reverse: false
+		position: Position.right
 	},
 	node: {
 		fields: {
@@ -136,7 +137,8 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 	protected buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
                                  existedArrowId?: number | string): ArrowViewModel {
 		const id = existedArrowId || `up${idCounter++}`;
-		const [ outCoords, inCoords ] = this.getCursorCoords(
+		const [ outCoords, inCoords ] = calculateCursorCoords(
+			this.Node,
 			nodeVM ? nodeVM.id : -1
 		);
 
@@ -169,28 +171,11 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 			return attrs;
 		}
 
-		const [ outPoint, inPoint ] = this.getCursorCoords(up);
+		const [ outPoint, inPoint ] = calculateCursorCoords(this.Node, up);
 
 		return {
 			...other,
-			transform: [`matrix(${calcArrowMatrix(outPoint, inPoint).matrix})`]
+			transform: [`matrix(${calculateArrowMatrix(outPoint, inPoint).matrix})`]
 		}
-	}
-
-	private getCursorCoords(index: number): Point[] {
-		const inNodeCoords = index === -1
-				? { x: -this.Node.width, y: 0 }
-				: this.Node.getNodeCoords(index);
-
-		const inPoint: Point = {
-			x: inNodeCoords.x + this.Node.width / 2,
-			y: inNodeCoords.y - CursorOptions.offset
-		};
-		const outPoint: Point = {
-			x: inPoint.x,
-			y: inPoint.y - CursorOptions.length
-		};
-
-		return [ outPoint, inPoint ];
 	}
 }

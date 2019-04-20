@@ -1,8 +1,8 @@
 import React, { HTMLAttributes, RefObject, SVGAttributes, useMemo } from 'react';
-import { calcArrowMatrix } from 'src/services/helpers';
 import { ArrowParams, Point } from 'src/services/interface';
 import { ArrowType } from 'src/services/constants';
 import './arrow.css';
+import { calculateArrowMatrix } from 'src/utils/positioning';
 
 interface Props extends HTMLAttributes<HTMLElement> {
 	nodeRef?: RefObject<SVGPathElement>,
@@ -20,7 +20,7 @@ const ARROW_TAIL_OPTIONS = {
 export const Arrow = ({ nodeRef, attrs, outPoint, inPoint, type }: Props) => {
 	const { transform, ...props } = attrs;
 	const { matrix, length }: ArrowParams = useMemo(
-	() => calcArrowMatrix(outPoint, inPoint),
+	() => calculateArrowMatrix(outPoint, inPoint),
 	[outPoint, inPoint]
 	);
 	const path: string = type === ArrowType.cursor

@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
-import {
-	calcTransformValue,
-	calcNodeMatrix
-} from 'src/services/helpers';
+import { calcTransformValue } from 'src/utils/animation';
 import { NodeProps } from 'src/services/interface';
 import './node.css';
+import { calculateNodeMatrix } from 'src/utils/positioning';
 
 export const Node = ({ children, nodeRef, attrs }: NodeProps) => {
 	const matrix: number[] = useMemo(
-	() => calcNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
-	[attrs.x, attrs.y]
+		() => calculateNodeMatrix({ x: Number(attrs.x), y: Number(attrs.y) }),
+		[attrs.x, attrs.y]
 	);
 	const transform: string = calcTransformValue(attrs);
 

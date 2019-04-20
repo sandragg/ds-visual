@@ -34,6 +34,13 @@ export const enum ArrowType {
 	link
 }
 
+export const enum Position {
+	top,
+	right,
+	bottom,
+	left
+}
+
 export const enum CursorOptions {
 	length = 30,
 	offset = 10

@@ -6,6 +6,8 @@ import {
 } from 'react';
 import {
 	ArrowType,
+	Position,
+	FieldType,
 	PromiseStatus,
 	TrackedActions
 } from 'src/services/constants';
@@ -98,9 +100,11 @@ export interface NodeFactory {
 	readonly width: number,
 	readonly height: number,
 	readonly offset: number,
+	readonly sequencePosition: Position,
 	component: FunctionComponent<NodeProps | object>,
 	getNodeCoords(index: number): Point,
-	getFieldCoords(nodeIndex: number, fieldKey: string): Point
+	getFieldCoords(nodeIndex: number, fieldKey: string): Point,
+	getFieldSize(field: FieldType): [number, number]
 }
 
 export interface NodeProps {

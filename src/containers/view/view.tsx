@@ -10,15 +10,15 @@ import {
 	ViewModel
 } from 'src/services/interface';
 import {
-	calcArrowMatrix,
 	getById,
 	getNodeCenterPoint,
-} from 'src/services/helpers';
+} from 'src/utils/animation';
 import animationStyles from 'src/services/animation-style';
 import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
 import { ArrowType, TrackedActions } from 'src/services/constants';
 import { IAnimateProps } from 'react-move/Animate';
+import { calculateArrowMatrix } from 'src/utils/positioning';
 
 let idCounter: number = 1;
 
@@ -162,7 +162,7 @@ export abstract class View<M, VType>
 		const defaultStyle = animationStyles[TrackedActions.default];
 
 		return arrows.map(arrow => {
-			const transformMatrix = `matrix(${calcArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`;
+			const transformMatrix = `matrix(${calculateArrowMatrix(arrow.outCoords, arrow.inCoords).matrix})`;
 
 			return (
 				<Animated
