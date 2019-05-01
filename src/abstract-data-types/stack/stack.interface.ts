@@ -6,8 +6,3 @@ interface ADTStack<VType> {
 	full(): boolean,
 	empty(): boolean
 }
-
-interface LListElement<VType> {
-	value: VType,
-	next: LListElement<VType>
-}
