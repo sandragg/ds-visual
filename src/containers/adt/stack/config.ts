@@ -7,6 +7,7 @@ import { ADTConfig } from 'src/containers/adt/index';
 import { Array } from 'src/abstract-data-types/stack';
 import { ArrayView } from './array';
 import { AbstractView } from './abstract';
+import { onTrack } from 'src/services/tracker';
 
 const config: ADTConfig = {
 	id: 3,
@@ -19,14 +20,14 @@ const config: ADTConfig = {
 			name: 'general',
 			model: Array.Stack,
 			trackedProps: Array.trackedProps,
-			trackHandler: Array.onTrack,
+			trackHandler: onTrack,
 			view: AbstractView
 		},
 		{
 			name: 'array',
 			model: Array.Stack,
 			trackedProps: Array.trackedProps,
-			trackHandler: Array.onTrack,
+			trackHandler: onTrack,
 			view: ArrayView
 		}
 	]
