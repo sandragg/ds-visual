@@ -1,9 +1,9 @@
 export const enum TrackedActions {
-	default,
-	select,
-	new,
-	delete,
-	change
+	default = 1 << 0,
+	select = 1 << 1,
+	new = 1 << 2,
+	delete = 1 << 3,
+	change = 1 << 4
 }
 
 export const enum PromiseStatus {

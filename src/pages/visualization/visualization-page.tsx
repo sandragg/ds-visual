@@ -115,7 +115,7 @@ function actionHandler(frame: ViewFrame<any, any>,
 			actionResultHandler(res);
 			return action.prerender && FrameVMC.prerender();
 		})
-		.then(() => FrameAC.build(FrameVMC.view.state, FrameVMC.view.buildAnimationStep()))
+		.then(() => FrameAC.build(FrameVMC.view.getAnimationBuildOptions()))
 		.then(() => FrameAC.play())
 		.then(res => console.log('res', res))
 		.catch(err => console.log('err', err));

@@ -6,11 +6,12 @@ import {
 	PromiseDefer,
 	ViewModel
 } from 'src/services/interface';
-import { defer } from 'src/utils/animation';
+import { buildAnimationStep, defer } from 'src/utils/animation';
 import animationStyles from 'src/services/animation-style';
 import { PromiseStatus, TrackedActions } from 'src/services/constants';
 import { AnimationHistory } from 'src/services/animation-history';
 import { History } from 'src/services/history';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 /**
  * Controller to manage animation.
@@ -63,16 +64,15 @@ export class AnimationController {
 	}
 	/**
 	 * Build animation history.
-	 * TODO REFACTOR!
-	 * @param vm
-	 * @param handler
+	 * @param options Options include handlers for animation build specific to each view
 	 */
-	public build(vm: ViewModel<any>,
-               handler: (vm: ViewModel<any>, step: HistoryStep, hist?: AnimationHistoryStep[]) => AnimationHistoryStep[]): void {
+	public build(options: AnimationBuildOptions): void {
+		console.log('History', this.trace.history);
+		const buildHandler = buildAnimationStep(options);
+
 		this.animationTrace.history = this.trace.history.stack.reduce(
 			(res, step) => {
-				const steps = handler(vm, step, res);
-				res.push(...steps);
+				res.push(...buildHandler(step, res));
 				return res;
 			},
 			[]

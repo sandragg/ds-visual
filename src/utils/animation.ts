@@ -1,11 +1,15 @@
 import {
+	AnimationHistoryStep,
+	ElementAnimationStep,
+	HistoryStep,
 	Point,
+	PromiseCallback,
 	PromiseDefer,
 	PromiseWithStatus,
-	PromiseCallback
 } from 'src/services/interface';
-import { PromiseStatus } from 'src/services/constants';
+import { PromiseStatus, TrackedActions } from 'src/services/constants';
 import { HashMap } from 'react-move';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 /**
  * Wrapper extends the promise with the current status property.
@@ -71,7 +75,7 @@ export function getNodeCenterPoint({ x, y }: Point): Point { // function probabl
  * @param container
  * @param id
  */
-export function getById(container: any[], id: number): any {
+export function getById(container: any[], id: number | string): any {
 	return container.find(elem => elem.id === id);
 }
 
@@ -104,4 +108,92 @@ export function filterElementAttrs(attrs: HashMap, prevAttrs: boolean): HashMap 
 			},
 			{}
 	);
+}
+
+const buildRules = {
+	skipAttrs: TrackedActions.select | TrackedActions.delete,
+	onlyPreviousState: TrackedActions.new | TrackedActions.delete,
+};
+
+export function buildAnimationStep(options: AnimationBuildOptions) {
+	let {
+		getElementViewModelById,
+		rule: checkRule,
+		extendStep,
+		calculateByAttrs: calculate
+	} = options;
+	const lastState = {};
+
+	typeof checkRule !== 'function' && (checkRule = null);
+	typeof extendStep !== 'function' && (extendStep = null);
+
+	return (step: HistoryStep, hist: AnimationHistoryStep[]): AnimationHistoryStep[] => {
+		const steps = [];
+		if (checkRule && !checkRule(step)) {
+			return steps;
+		}
+
+		const { id, opts, attrs } = step;
+		const itemVM = getElementViewModelById(step);
+		const { id: itemVmId, ref } = itemVM;
+		const isChange = opts === TrackedActions.change;
+		const emptyAttrs = {};
+		let prevStateIndex = itemVmId in lastState ? lastState[itemVmId] : null;
+
+		if (prevStateIndex === null) {
+			const onlyPrevState = buildRules.onlyPreviousState & opts;
+			const animationAttrs = buildRules.skipAttrs & opts
+				? emptyAttrs
+				: calculate(id, isChange ? filterElementAttrs(attrs, true) : attrs);
+
+			steps.push({
+				id: itemVmId,
+				ref,
+				action: onlyPrevState ? opts : TrackedActions.default,
+				attrs: animationAttrs,
+				previousState: prevStateIndex
+			});
+			lastState[itemVmId] = prevStateIndex = hist.length;
+
+			if (onlyPrevState) {
+				// probably extended step is necessary here (animate arrows of a new node)
+				return steps;
+			}
+		}
+		else if (isChange) {
+			let prevState = hist[prevStateIndex] as ElementAnimationStep;
+			if (Array.isArray(prevState)) {
+				prevState = getById(prevState, itemVmId);
+			}
+
+			prevState.attrs = calculate(id, {
+				...prevState.attrs,
+				...filterElementAttrs(attrs, true)
+			});
+		}
+
+		steps.push({
+			id: itemVmId,
+			ref,
+			action: opts,
+			attrs: calculate(id, isChange ? filterElementAttrs(attrs, false) : attrs),
+			previousState: prevStateIndex
+		});
+
+		if (extendStep) {
+			const extension = extendStep(step);
+
+			if (extension.length) {
+				const lastStep = steps.pop();
+				steps.push([
+					lastStep,
+					...extension
+				]);
+			}
+		}
+
+		lastState[itemVmId] = steps.length === 1 ? hist.length : ++prevStateIndex;
+
+		return steps;
+	};
 }

@@ -1,20 +1,19 @@
 import React from 'react';
 import {
-	AnimationHistoryStep,
 	ArrowViewModel,
+	ElementViewModel,
 	HistoryStep,
 	NodeViewModel,
 	Point,
 	ViewModel
 } from 'src/services/interface';
-import { filterElementAttrs } from 'src/utils/animation';
+import { getById } from 'src/utils/animation';
 import {
 	ArrowType,
 	CursorOptions,
 	Position,
 	Direction,
-	FieldType,
-	TrackedActions
+	FieldType
 } from 'src/services/constants';
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
@@ -26,6 +25,8 @@ import {
 	calculateArrowMatrix,
 	calculateCursorCoords
 } from 'src/utils/positioning';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
+import { HashMap } from 'react-move';
 
 let idCounter: number = 1;
 
@@ -53,7 +54,23 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 	constructor(props) {
 		super(props);
+
 		this.state = this.buildInitialViewModel();
+		this.getElementViewModelById = this.getElementViewModelById.bind(this);
+		this.mapToAnimateAttrs = this.mapToAnimateAttrs.bind(this);
+	}
+
+	public getAnimationBuildOptions(): AnimationBuildOptions {
+		return {
+			getElementViewModelById: this.getElementViewModelById,
+			calculateByAttrs: this.mapToAnimateAttrs
+		};
+	}
+
+	public getElementViewModelById(step: HistoryStep): ElementViewModel {
+		return step.id === 'up'
+			? this.state.arrows[0]
+			: getById(this.state.nodes, step.id);
 	}
 
 	// TODO NEED REFACTORING! Currently it recalculates entire model every time.
@@ -71,60 +88,6 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		arrows[0] = this.buildCursorViewModel(nodes[up], cursorVM && cursorVM.id);
 	}
 
-	// TODO revise!!!
-	public buildAnimationStep() {
-		const lastState = {};
-
-		return (vm: ViewModel<VType>, { id, opts, attrs }: HistoryStep, hist?: AnimationHistoryStep[]): AnimationHistoryStep[] => {
-			const itemVM = id === 'up'
-				? vm.arrows[0]
-				: vm.nodes.find(node => node.id === id);
-			let prevStateIndex = id in lastState ? lastState[id] : null;
-			const isChange = opts === TrackedActions.change;
-			const steps = [];
-
-			if (prevStateIndex === null) {
-				steps.push({
-					ref: itemVM.ref,
-					action: TrackedActions.default,
-					attrs: this.mapToAnimateAttrs(
-						isChange
-							? filterElementAttrs(attrs, true)
-							: attrs
-					),
-					previousState: prevStateIndex
-				});
-
-				prevStateIndex = hist.length;
-			}
-			else if (isChange) {
-				const prevState = hist[prevStateIndex];
-
-				// @ts-ignore
-				prevState.attrs = this.mapToAnimateAttrs({
-					// @ts-ignore
-					...prevState.attrs,
-					...filterElementAttrs(attrs, true)
-				});
-			}
-
-			steps.push({
-				ref: itemVM.ref,
-				action: opts,
-				attrs: this.mapToAnimateAttrs(
-					isChange
-						? filterElementAttrs(attrs, false)
-						: attrs
-				),
-				previousState: prevStateIndex
-			});
-
-			lastState[id] = prevStateIndex + 1;
-
-			return steps;
-		};
-	}
-
 	protected buildNodeViewModel([ value, id ]: [VType, number]): NodeViewModel<VType> {
 		return {
 			id,
@@ -136,7 +99,7 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 	protected buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
                                  existedArrowId?: number | string): ArrowViewModel {
-		const id = existedArrowId || `up${idCounter++}`;
+		const id = existedArrowId || `link${idCounter++}`;
 		const [ outCoords, inCoords ] = calculateCursorCoords(
 			this.Node,
 			nodeVM ? nodeVM.id : -1
@@ -160,12 +123,12 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		for (let i = 1; i < Stack.STACK_SIZE; i++) {
 			nodes[i] = this.buildNodeViewModel([initialValue, i]);
 		}
-		arrows[0] = this.buildCursorViewModel();
+		arrows[0] = this.buildCursorViewModel(null, 'up');
 
 		return viewModel;
 	}
 
-	private mapToAnimateAttrs(attrs) {
+	private mapToAnimateAttrs(id: number | string, attrs: HashMap): HashMap {
 		const { up, ...other } = attrs;
 		if (up === undefined) {
 			return attrs;

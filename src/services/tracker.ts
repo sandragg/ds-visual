@@ -30,14 +30,17 @@ function bindTracker<M>(thisArg: M,
 		opt =>
 		(target: IFunction, thisArg: M, argArray?: any): any => {
 			const res: any = Reflect.apply(target, thisArg, argArray);
-			handler(opt[0] || opt, res, argArray, opt);
+			const option = Array.isArray(opt) ? opt[1] : null;
+			handler(option ? opt[0] : opt, res, argArray, option);
 			return res;
 		};
-	const constructHandler: (opt: TrackedItemOption) => ProxyConstructHandler =
+	const constructHandler: (opt: TrackedClassItem) => ProxyConstructHandler =
 		opt =>
 		(target: IFunction, argArray?: any): object => {
 			let res: any = Reflect.construct(target, argArray);
-			res = bindTracker(res, opt, handler);
+			const option = Array.isArray(opt) ? opt[1] : null;
+			res = bindTracker(res, option, handler);
+			handler(option ? opt[0] : opt, res, argArray, TrackedActions.new);
 			return res;
 		};
 
@@ -48,9 +51,9 @@ function bindTracker<M>(thisArg: M,
 	/* Set Proxy wrapper on every tracked item. */
 	trackedItems.forEach(item => {
 		let itemName: PropertyKey;
-		let opt: TrackedItemOption;
+		let option: TrackedItemOption;
 		if (Array.isArray(item)) {
-			[ itemName, opt ] = item;
+			[ itemName, option ] = item;
 		}
 		else {
 			itemName = item;
@@ -58,7 +61,7 @@ function bindTracker<M>(thisArg: M,
 
 		const classProp: keyof M = thisArg[itemName];
 		const apply: ProxyApplyHandler = applyHandler(item);
-		const construct: ProxyConstructHandler = constructHandler(opt);
+		const construct: ProxyConstructHandler = constructHandler(item);
 		/* Construct handler is used for binding internal classes. */
 		if (typeof classProp === 'function') {
 			thisArg[itemName] = new Proxy(classProp, { apply, construct });
@@ -66,7 +69,7 @@ function bindTracker<M>(thisArg: M,
 		}
 
 		if (classProp && typeof classProp === 'object') {
-			thisArg[itemName] = wrapObjectItem(classProp, handler, item);
+			thisArg[itemName] = wrapObjectItem(classProp, handler, option);
 			return;
 		}
 
@@ -83,7 +86,7 @@ function bindTracker<M>(thisArg: M,
 				apply(target: IFunction, thisArg: object, argArray?: any): any {
 					const prev: any = Reflect.get(thisArg, itemName);
 					const res: any = Reflect.apply(target, thisArg, argArray);
-					handler(itemName, res, argArray, item, prev);
+					handler(itemName, res, argArray, option, prev);
 					return res;
 				}
 			})
@@ -93,16 +96,16 @@ function bindTracker<M>(thisArg: M,
 	return thisArg;
 }
 
-function wrapObjectItem(instance: any, handler: TrackHandler, opts?: TrackedClassItem) {
+function wrapObjectItem(instance: any, handler: TrackHandler, option?: TrackedItemOption) {
 	return new Proxy(instance, {
 		get(target: never, p: PropertyKey): any {
 			const res: any = Reflect.get(target, p);
-			handler(p, res, [target], opts);
+			handler(p, res, [target], option);
 			return res;
 		},
 		set(target: never, p: PropertyKey, value: any): boolean {
 			const prev: any = Reflect.get(target, p);
-			handler(p, value, [target], opts, prev);
+			handler(p, value, [target], option, prev);
 			return Reflect.set(target, p, value);
 		}
 	});
@@ -120,7 +123,7 @@ const onTrack = (trace: Trace): TrackHandler => (
 		key: string | number,
 		result: any,
 		args: any[],
-		opt: TrackedClassItem,
+		option: TrackedItemOption,
 		prevResult?: any
 ): void => {
 
@@ -134,10 +137,10 @@ const onTrack = (trace: Trace): TrackHandler => (
 
 	const id = isIndex
 			? Number(key)
-			: opt ? key : args[0].id;
+			: option ? key : args[0].id;
 	const opts = isChanged
 			? TrackedActions.change
-			: opt && opt[1] || TrackedActions.select;
+			: option || TrackedActions.select;
 	const attrs = {
 		[isIndex ? 'value' : key]:
 				isChanged ? [prevResult, result] : result

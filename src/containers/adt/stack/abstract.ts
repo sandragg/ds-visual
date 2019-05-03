@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-	AnimationHistoryStep,
 	ArrowViewModel,
+	ElementAnimationStep,
+	ElementViewModel,
 	HistoryStep,
 	NodeViewModel,
 	Point,
@@ -20,11 +21,13 @@ import {
 } from 'src/services/constants';
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
-import { filterElementAttrs } from 'src/utils/animation';
+import { getById } from 'src/utils/animation';
 import {
 	calculateArrowMatrix,
 	calculateCursorCoords
 } from 'src/utils/positioning';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
+import { HashMap } from 'react-move';
 
 let idCounter: number = 1;
 
@@ -53,61 +56,57 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 
 	constructor(props) {
 		super(props);
+
 		this.state = this.buildInitialViewModel();
+		this.getElementViewModelById = this.getElementViewModelById.bind(this);
+		this.mapToAnimateAttrs = this.mapToAnimateAttrs.bind(this);
+		this.buildExtendedAnimationStep =this.buildExtendedAnimationStep.bind(this);
 	}
 
-	public buildAnimationStep() {
-		return (vm: ViewModel<VType>, { id, opts, attrs }: HistoryStep): AnimationHistoryStep[] => {
-			const steps = [];
-			const up = attrs.up;
-
-			if (!Array.isArray(up)) {
-				return steps;
-			}
-
-			const cursorVM = vm.arrows[0];
-			const nodeId = up[0] > up[1] ? up[0] : up[1];
-			const emptyAttrs = {};
-
-			const changedElements = [
-				{
-					ref: cursorVM.ref,
-					action: TrackedActions.change,
-					attrs: this.mapToAnimateAttrs(filterElementAttrs(attrs, false)),
-					previousState: 0
-				}
-			];
-
-			if (up[0] !== up[1]) {
-				up[1] === -1
-					? changedElements.push(...vm.nodes.map(node => (
-							{
-								ref: node.ref,
-								action: TrackedActions.delete,
-								attrs: emptyAttrs,
-								previousState: null
-							}
-						)))
-					: changedElements.push({
-							ref: vm.nodes.find(node => node.id === nodeId).ref,
-							action: up[0] > up[1] ? TrackedActions.delete : TrackedActions.new,
-							attrs: emptyAttrs,
-							previousState: null
-						});
-			}
-
-			steps.push(
-				{
-					ref: cursorVM.ref,
-					action: TrackedActions.default,
-					attrs: this.mapToAnimateAttrs(filterElementAttrs(attrs, true)),
-					previousState: null
-				},
-				changedElements
-			);
-
-			return steps;
+	public getAnimationBuildOptions(): AnimationBuildOptions {
+		return {
+			getElementViewModelById: this.getElementViewModelById,
+			calculateByAttrs: this.mapToAnimateAttrs,
+			rule: this.checkAnimationStep,
+			extendStep: this.buildExtendedAnimationStep
 		};
+	}
+
+	private checkAnimationStep(step): boolean {
+		return Array.isArray(step.attrs.up);
+	}
+
+	private buildExtendedAnimationStep(step: HistoryStep): ElementAnimationStep[] {
+		const emptyAttrs = {};
+		const { up } = step.attrs;
+		const nodeId = up[0] > up[1] ? up[0] : up[1];
+
+		if (!up || up[0] === up[1]) {
+			return [];
+		}
+		return up[1] === -1
+			? this.state.nodes.map(node => (
+				{
+					id: node.id,
+					ref: node.ref,
+					action: TrackedActions.delete,
+					attrs: emptyAttrs,
+					previousState: null
+				}
+			))
+			: [{
+				id: nodeId,
+				ref: getById(this.state.nodes, nodeId).ref,
+				action: up[0] > up[1] ? TrackedActions.delete : TrackedActions.new,
+				attrs: emptyAttrs,
+				previousState: null
+			}];
+	}
+
+	public getElementViewModelById(step: HistoryStep): ElementViewModel {
+		return step.id === 'up'
+				? this.state.arrows[0]
+				: getById(this.state.nodes, step.id);
 	}
 
 	public buildViewModel(model: Stack<VType>): void {
@@ -126,7 +125,7 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 	protected buildInitialViewModel(): ViewModel<VType> {
 		const viewModel	= this.getViewInitialState();
 
-		viewModel.arrows[0] = this.buildCursorViewModel();
+		viewModel.arrows[0] = this.buildCursorViewModel(null, 'up');
 
 		return viewModel;
 	}
@@ -140,7 +139,7 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 		};
 	}
 	// TODO extract
-	private mapToAnimateAttrs(attrs) {
+	private mapToAnimateAttrs(id: number | string, attrs: HashMap): HashMap {
 		const { up, ...other } = attrs;
 		if (up === undefined) {
 			return attrs;
@@ -156,7 +155,7 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 
 	private buildCursorViewModel(nodeVM?: NodeViewModel<VType>,
                                existedArrowId?: number | string): ArrowViewModel {
-		const id = existedArrowId || `up${idCounter++}`;
+		const id = existedArrowId || `link${idCounter++}`;
 		const [ outCoords, inCoords ] = calculateCursorCoords(
 			this.Node,
 			nodeVM ? nodeVM.id : -1,

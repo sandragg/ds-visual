@@ -19,6 +19,7 @@ import { Animated } from 'src/containers/animated';
 import { ArrowType, TrackedActions } from 'src/services/constants';
 import { IAnimateProps } from 'react-move/Animate';
 import { calculateArrowMatrix } from 'src/utils/positioning';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 let idCounter: number = 1;
 
@@ -78,7 +79,7 @@ export abstract class View<M, VType>
 	 * @param model Structure model
 	 */
 	public abstract buildViewModel(model: M): void;
-	public abstract buildAnimationStep();
+	public abstract getAnimationBuildOptions(): AnimationBuildOptions;
 
 	public applyViewModel(cb?: CallbackFunction): void {
 		this.setState(this.viewModel, typeof cb === 'function' && cb);

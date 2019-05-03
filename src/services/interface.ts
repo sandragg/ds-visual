@@ -15,6 +15,7 @@ import { HashMap } from 'react-move';
 import { History } from 'src/services/history';
 import { AnimationController } from 'src/services/animation-controller';
 import { ViewModelController } from 'src/services/view-model-controller';
+import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 export interface Structure {
 	id: number,
@@ -59,6 +60,8 @@ export interface AnimatedNode {
 	ref: RefObject<HTMLElement>,
 	animationAttrs: any
 }
+
+export type ElementViewModel<VType = {}> = NodeViewModel<VType> | ArrowViewModel;
 
 export interface NodeViewModel<VType> {
 	id: number,
@@ -128,8 +131,9 @@ interface AnimatedElement {
 export type AnimationHistoryStep = ElementAnimationStep | ElementAnimationStep[];
 
 export interface ElementAnimationStep {
+	id: number | string,
 	ref: RefObject<AnimatedElement>,
-	attrs: object,
+	attrs: HashMap,
 	action?: TrackedActions,
 	previousState?: number | null
 }
@@ -140,7 +144,7 @@ export interface ADTView<M, VType> {
 	buildViewModel(model: M): void,
 	applyViewModel(cb?: CallbackFunction): void,
 	prerender(cb?: CallbackFunction): void,
-	buildAnimationStep(): (vm: ViewModel<VType>, step: HistoryStep, hist?: AnimationHistoryStep[]) => AnimationHistoryStep[]
+	getAnimationBuildOptions(): AnimationBuildOptions
 }
 
 export interface Trace {

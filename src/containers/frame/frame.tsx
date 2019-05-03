@@ -30,9 +30,9 @@ export class Frame<M, V extends View<M, any>> {
 
 		this.View = config.view;
 		this.model = bindTracker(
-				new config.model(),
-				config.trackedProps,
-				config.trackHandler(this.AnimationController.trace)
+			new config.model(),
+			config.trackedProps,
+			config.trackHandler(this.AnimationController.trace)
 		);
 	}
 
