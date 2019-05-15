@@ -9,3 +9,5 @@ export const trackedProps: TrackedClassItem[] = [
 	['delete', TrackedActions.delete],
 	'Element'
 ];
+
+export const propertyKeyMatchesId: PropertyKey[] = ['head'];

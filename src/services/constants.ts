@@ -6,6 +6,12 @@ export const enum TrackedActions {
 	change = 1 << 4
 }
 
+export const enum BulkType {
+	none = 0,
+	partial = 1 << 0,
+	all = 1 << 1
+}
+
 export const enum PromiseStatus {
 	pending = 'pending',
 	resolved = 'resolved',

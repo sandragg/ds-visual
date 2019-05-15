@@ -29,6 +29,10 @@ export class AnimationHistory {
 	 * @param end
 	 */
 	public *[Symbol.iterator](begin?: number, end?: number): Iterator<ElementAnimationStep> {
+		if (!this.history.length) {
+			return;
+		}
+
 		begin = this.validatePosition(begin) ? begin : 0;
 		end = this.validatePosition(end) ? end : this.history.length;
 

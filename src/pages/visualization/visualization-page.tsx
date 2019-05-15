@@ -18,7 +18,7 @@ import { View } from 'src/containers/view';
 // TODO DRAFT VARIANT. Should be adapted for multiple frames + there will be a side bar with frames control.
 export const VisualizationPage = (props: { config: ADTConfig }) => {
 	const { config } = props;
-	const struct = config.abstractions[0];
+	const struct = config.abstractions[2];
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const outputRef = useRef<HTMLOutputElement>(null);
@@ -110,7 +110,7 @@ function actionHandler(frame: ViewFrame<any, any>,
 	}
 
 	renderPromise
-		.then(() => FrameVMC.build(action, params, FrameAC.toggleHistoryStatus))
+		.then(() => FrameVMC.build(action, params, FrameAC.trace.history.stack, FrameAC.toggleHistoryStatus))
 		.then(res => {
 			actionResultHandler(res);
 			return action.prerender && FrameVMC.prerender();

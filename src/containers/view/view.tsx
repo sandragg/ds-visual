@@ -18,7 +18,7 @@ import { Arrow } from 'src/components/arrow';
 import { Animated } from 'src/containers/animated';
 import { ArrowType, TrackedActions } from 'src/services/constants';
 import { IAnimateProps } from 'react-move/Animate';
-import { calculateArrowMatrix } from 'src/utils/positioning';
+import { calculateArrowMatrix, calculateLinkCoords } from 'src/utils/positioning';
 import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 let idCounter: number = 1;
@@ -42,6 +42,11 @@ export abstract class View<M, VType>
 	 * @public
 	 */
 	public viewModel: ViewModel<VType>;
+	/**
+	 * Previous component state (stores previous coordinates).
+	 * @public
+	 */
+	public previousViewModel: ViewModel<VType>;
 	/**
 	 * Initial coordinates for structure view.
 	 * @protected
@@ -82,16 +87,23 @@ export abstract class View<M, VType>
 	public abstract getAnimationBuildOptions(): AnimationBuildOptions;
 
 	public applyViewModel(cb?: CallbackFunction): void {
+		this.previousViewModel = this.viewModel;
 		this.setState(this.viewModel, typeof cb === 'function' && cb);
 	}
 
 	public prerender(cb?: CallbackFunction): void {
 		this.renderType = RenderType.prerender;
 
-		this.setState(this.viewModel, () => {
-			this.renderType = RenderType.default;
-			typeof cb === 'function' && cb();
-		});
+		this.setState(
+		prevState => {
+				this.previousViewModel = prevState;
+				return this.viewModel;
+			},
+		() => {
+				this.renderType = RenderType.default;
+				typeof cb === 'function' && cb();
+			}
+		);
 	}
 
 	protected abstract buildInitialViewModel(): ViewModel<VType>;
@@ -114,9 +126,12 @@ export abstract class View<M, VType>
 	 * @param existedArrowId
 	 */
 	protected buildArrowViewModel(outNodeVM: NodeViewModel<VType>,
-	                              inNodeVM: NodeViewModel<VType>,
-	                              existedArrowId: number ): ArrowViewModel { // TODO smth strange
-		const id = existedArrowId || idCounter++;
+                                inNodeVM: NodeViewModel<VType>,
+                                existedArrowId: number | string,
+                                fieldName: string,
+                                position?: number): ArrowViewModel {
+		const id = existedArrowId || `link${idCounter++}`;
+		const [ outCoords, inCoords ] = calculateLinkCoords(this.Node, position, fieldName, position + 1);
 
 		if (!outNodeVM.outArrows) {
 			outNodeVM.outArrows = [];
@@ -131,9 +146,9 @@ export abstract class View<M, VType>
 			id,
 			ref: React.createRef(),
 			outNode: outNodeVM.id,
-			outCoords: getNodeCenterPoint(outNodeVM.coords),
+			outCoords,
 			inNode: inNodeVM.id,
-			inCoords: getNodeCenterPoint(inNodeVM.coords),
+			inCoords,
 			type: ArrowType.link
 		}
 	}
@@ -149,8 +164,8 @@ export abstract class View<M, VType>
 		const attrs = getAnimationAttrsByRenderType(this.renderType);
 
 		return [
-			this.buildArrowComponents(arrows, attrs),
-			this.buildNodeComponents(nodes, attrs)
+			this.buildNodeComponents(nodes, attrs),
+			this.buildArrowComponents(arrows, attrs)
 		];
 	}
 	/**
@@ -272,13 +287,13 @@ export abstract class View<M, VType>
 	 */
 	protected getCommonArrow(viewModel: ViewModel<VType>, outNodeId: number, inNodeId: number): ArrowViewModel {
 		const { nodes, arrows } = viewModel;
-		const parentVM = getById(nodes, outNodeId);
+		const parentVM = getById<NodeViewModel<VType>>(nodes, outNodeId);
 
 		if (!parentVM || !parentVM.outArrows) {
 			return null;
 		}
 		for (const arrowId of parentVM.outArrows) { // TODO check linked nodes
-			const arrowVM = getById(arrows, arrowId);
+			const arrowVM = getById<ArrowViewModel>(arrows, arrowId);
 			if (arrowVM.inNode === inNodeId) {
 				return arrowVM;
 			}

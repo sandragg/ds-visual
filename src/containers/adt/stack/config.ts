@@ -4,9 +4,10 @@ import {
 } from 'src/services/interface';
 import { StackInterface } from './interface';
 import { ADTConfig } from 'src/containers/adt/index';
-import { Array } from 'src/abstract-data-types/stack';
+import { Array, LinkedList } from 'src/abstract-data-types/stack';
 import { ArrayView } from './array';
 import { AbstractView } from './abstract';
+import { LinkedListView } from './linked-list';
 import { onTrack } from 'src/services/tracker';
 
 const config: ADTConfig = {
@@ -29,6 +30,13 @@ const config: ADTConfig = {
 			trackedProps: Array.trackedProps,
 			trackHandler: onTrack,
 			view: ArrayView
+		},
+		{
+			name: 'linked list',
+			model: LinkedList.Stack,
+			trackedProps: LinkedList.trackedProps,
+			trackHandler: onTrack,
+			view: LinkedListView
 		}
 	]
 };

@@ -96,7 +96,7 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 			))
 			: [{
 				id: nodeId,
-				ref: getById(this.state.nodes, nodeId).ref,
+				ref: getById<NodeViewModel<VType>>(this.state.nodes, nodeId).ref,
 				action: up[0] > up[1] ? TrackedActions.delete : TrackedActions.new,
 				attrs: emptyAttrs,
 				previousState: null

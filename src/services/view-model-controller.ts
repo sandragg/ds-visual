@@ -1,6 +1,6 @@
 import {
 	ADTView,
-	CallbackFunction,
+	CallbackFunction, HistoryStep,
 	ModelAction,
 	ValidationResponse
 } from 'src/services/interface';
@@ -19,13 +19,14 @@ export class ViewModelController<M, V extends ADTView<M, any>> {
 	// TODO create condition to update the view
 	public build(action: ModelAction,
                params: any[],
+               history?: HistoryStep[],
                preUpdateCb?: CallbackFunction,
                postUpdateCb?: CallbackFunction): Promise<void> {
 		return new Promise(resolve => {
 			const result: any = this.updateModel(action.method, params, preUpdateCb);
 			// @ts-ignore
 			if (action.mutable && result !== this.model.constructor.OUT_OF_DOMAIN) {
-				this.updateView(postUpdateCb || preUpdateCb);
+				this.updateView(postUpdateCb || preUpdateCb, history);
 			}
 			resolve(result);
 		});
@@ -49,8 +50,8 @@ export class ViewModelController<M, V extends ADTView<M, any>> {
 		return this.model[action](...params);
 	}
 
-	private updateView(cb?: CallbackFunction): void {
+	private updateView(cb?: CallbackFunction, history?: HistoryStep[]): void {
 		typeof cb === 'function' && cb();
-		this.view.buildViewModel(this.model);
+		this.view.buildViewModel(this.model, history);
 	}
 }

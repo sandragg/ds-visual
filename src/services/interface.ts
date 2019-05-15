@@ -68,8 +68,8 @@ export interface NodeViewModel<VType> {
 	ref: RefObject<AnimatedElement>
 	value: VType,
 	coords: Point,
-	inArrows?: number[],
-	outArrows?: number[]
+	inArrows?: Array<number | string>,
+	outArrows?: Array<number | string>
 }
 
 export interface ArrowViewModel {
@@ -141,7 +141,7 @@ export interface ElementAnimationStep {
 export interface ADTView<M, VType> {
 	state: ViewModel<VType>,
 	viewModel: ViewModel<VType>,
-	buildViewModel(model: M): void,
+	buildViewModel(model: M, history?: HistoryStep[]): void,
 	applyViewModel(cb?: CallbackFunction): void,
 	prerender(cb?: CallbackFunction): void,
 	getAnimationBuildOptions(): AnimationBuildOptions

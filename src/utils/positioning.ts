@@ -45,18 +45,13 @@ export function calculatePointByOffsetPosition(point: Point, position: Position,
 }
 
 export function calculateCursorCoords(Node: NodeFactory,
-                                      index: number,
-                                      position: Position = Position.top): [Point, Point] {
-	let isVertical = getDirectionByPosition(Node.sequencePosition) === Direction.vertical;
-	const inNodeCoords = index >= 0 ? Node.getNodeCoords(index) : (
-		calculatePointByOffsetPosition(
-			{ x: 0, y: 0 },
-			getReversePosition(Node.sequencePosition),
-			isVertical ? Node.height : Node.width
-		)
-	);
+                                      nodePosition: number | Point,
+                                      cursorPosition: Position = Position.top): [Point, Point] {
+	const inNodeCoords: Point = typeof nodePosition === 'number'
+		? Node.getNodeCoords(nodePosition)
+		: nodePosition;
 
-	isVertical = getDirectionByPosition(position) === Direction.vertical;
+	const isVertical = getDirectionByPosition(cursorPosition) === Direction.vertical;
 	const nodeHalfWidth = Node.width / 2;
 	const nodeHalfHeight = Node.height / 2;
 	const offset = CursorOptions.offset + (isVertical ? nodeHalfHeight : nodeHalfWidth);
@@ -65,8 +60,8 @@ export function calculateCursorCoords(Node: NodeFactory,
 		x: inNodeCoords.x + nodeHalfWidth,
 		y: inNodeCoords.y + nodeHalfHeight
 	};
-	const inPoint = calculatePointByOffsetPosition(centerPoint, position, offset);
-	const outPoint = calculatePointByOffsetPosition(inPoint, position, CursorOptions.length);
+	const inPoint = calculatePointByOffsetPosition(centerPoint, cursorPosition, offset);
+	const outPoint = calculatePointByOffsetPosition(inPoint, cursorPosition, CursorOptions.length);
 
 	return [ outPoint, inPoint ];
 }
@@ -75,9 +70,6 @@ export function calculateLinkCoords(Node: NodeFactory,
                                     outNodeIndex: number,
                                     outNodeFieldKey: string,
                                     inNodeIndex: number | null): [Point, Point] {
-	if (outNodeIndex < 0) {
-		throw new Error('Link arrow out node index should be >= 0');
-	}
 	const outCoords = Node.getFieldCoords(outNodeIndex, outNodeFieldKey);
 	const fieldSize = Node.getFieldSize(FieldType.ref);
 	outCoords.x += fieldSize[0] / 2;

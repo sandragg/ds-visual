@@ -69,13 +69,14 @@ export class AnimationController {
 	public build(options: AnimationBuildOptions): void {
 		console.log('History', this.trace.history);
 		const buildHandler = buildAnimationStep(options);
+		this.animationTrace.reset();
 
 		this.animationTrace.history = this.trace.history.stack.reduce(
 			(res, step) => {
-				res.push(...buildHandler(step, res));
+				res.push(...buildHandler(step, this.animationTrace));
 				return res;
 			},
-			[]
+			this.animationTrace.history
 		);
 		console.log('animationHistory', this.animationTrace.history);
 	}

@@ -1,4 +1,5 @@
 import { Element } from './element';
+import { BulkType } from 'src/services/constants';
 
 export class Stack<VType> implements ADTStack<VType> {
 	public static OUT_OF_DOMAIN: null = null;
@@ -41,6 +42,7 @@ export class Stack<VType> implements ADTStack<VType> {
 	}
 
 	public erase(): void {
+		this.delete({ bulkType: BulkType.all });
 		this.head = Stack.OUT_OF_DOMAIN;
 	}
 
@@ -52,7 +54,7 @@ export class Stack<VType> implements ADTStack<VType> {
 		return this.head === Stack.OUT_OF_DOMAIN;
 	}
 	// for tracking element deleting
-	private delete(element: Element<VType>): Element<VType> {
+	private delete(element: object): object {
 		return element;
 	}
 }

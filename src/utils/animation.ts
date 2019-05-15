@@ -1,15 +1,16 @@
 import {
 	AnimationHistoryStep,
-	ElementAnimationStep,
+	ElementAnimationStep, ElementViewModel,
 	HistoryStep,
 	Point,
 	PromiseCallback,
 	PromiseDefer,
 	PromiseWithStatus,
 } from 'src/services/interface';
-import { PromiseStatus, TrackedActions } from 'src/services/constants';
+import { BulkType, PromiseStatus, TrackedActions } from 'src/services/constants';
 import { HashMap } from 'react-move';
 import { AnimationBuildOptions } from 'src/utils/utils.interface';
+import { AnimationHistory } from 'src/services/animation-history';
 
 /**
  * Wrapper extends the promise with the current status property.
@@ -63,10 +64,10 @@ export function calcTransformValue(attrs: any): string {
  * @param x Node top left corner
  * @param y Node top left corner
  */
-export function getNodeCenterPoint({ x, y }: Point): Point { // function probably will be removed
+export function getNodeCenterPoint({ x, y }: Point, [width, height]: [number, number]): Point { // function probably will be removed
 	return {
-		x,
-		y
+		x: x - width / 2,
+		y: y - height / 2
 	}
 }
 
@@ -75,7 +76,7 @@ export function getNodeCenterPoint({ x, y }: Point): Point { // function probabl
  * @param container
  * @param id
  */
-export function getById(container: any[], id: number | string): any {
+export function getById<T = {}>(container: any[], id: number | string): T {
 	return container.find(elem => elem.id === id);
 }
 
@@ -113,6 +114,7 @@ export function filterElementAttrs(attrs: HashMap, prevAttrs: boolean): HashMap 
 const buildRules = {
 	skipAttrs: TrackedActions.select | TrackedActions.delete,
 	onlyPreviousState: TrackedActions.new | TrackedActions.delete,
+	bulk: BulkType.partial | BulkType.all
 };
 
 export function buildAnimationStep(options: AnimationBuildOptions) {
@@ -123,18 +125,25 @@ export function buildAnimationStep(options: AnimationBuildOptions) {
 		calculateByAttrs: calculate
 	} = options;
 	const lastState = {};
+	const memoGetElementViewModelById = memo(getElementViewModelById);
 
 	typeof checkRule !== 'function' && (checkRule = null);
 	typeof extendStep !== 'function' && (extendStep = null);
 
-	return (step: HistoryStep, hist: AnimationHistoryStep[]): AnimationHistoryStep[] => {
-		const steps = [];
+	return (step: HistoryStep, animationTrace: AnimationHistory): AnimationHistoryStep[] => {
+		const steps: AnimationHistoryStep[] = [];
 		if (checkRule && !checkRule(step)) {
 			return steps;
 		}
 
 		const { id, opts, attrs } = step;
-		const itemVM = getElementViewModelById(step);
+		const { history } = animationTrace;
+
+		if (attrs[id] && buildRules.bulk & attrs[id].bulkType) {
+			return extendStep ? [extendStep(step)] : [];
+		}
+
+		const itemVM: ElementViewModel = memoGetElementViewModelById(step);
 		const { id: itemVmId, ref } = itemVM;
 		const isChange = opts === TrackedActions.change;
 		const emptyAttrs = {};
@@ -144,7 +153,7 @@ export function buildAnimationStep(options: AnimationBuildOptions) {
 			const onlyPrevState = buildRules.onlyPreviousState & opts;
 			const animationAttrs = buildRules.skipAttrs & opts
 				? emptyAttrs
-				: calculate(id, isChange ? filterElementAttrs(attrs, true) : attrs);
+				: calculate(id, isChange ? filterElementAttrs(attrs, true) : attrs, animationTrace);
 
 			steps.push({
 				id: itemVmId,
@@ -153,15 +162,15 @@ export function buildAnimationStep(options: AnimationBuildOptions) {
 				attrs: animationAttrs,
 				previousState: prevStateIndex
 			});
-			lastState[itemVmId] = prevStateIndex = hist.length;
+			lastState[itemVmId] = prevStateIndex = history.length;
 
 			if (onlyPrevState) {
-				// probably extended step is necessary here (animate arrows of a new node)
+				extendStep && composeWithLastStep(steps, extendStep(step, itemVM));
 				return steps;
 			}
 		}
 		else if (isChange) {
-			let prevState = hist[prevStateIndex] as ElementAnimationStep;
+			let prevState = history[prevStateIndex] as ElementAnimationStep;
 			if (Array.isArray(prevState)) {
 				prevState = getById(prevState, itemVmId);
 			}
@@ -169,31 +178,40 @@ export function buildAnimationStep(options: AnimationBuildOptions) {
 			prevState.attrs = calculate(id, {
 				...prevState.attrs,
 				...filterElementAttrs(attrs, true)
-			});
+			}, animationTrace);
 		}
 
 		steps.push({
 			id: itemVmId,
 			ref,
 			action: opts,
-			attrs: calculate(id, isChange ? filterElementAttrs(attrs, false) : attrs),
+			attrs: calculate(id, isChange ? filterElementAttrs(attrs, false) : attrs, animationTrace),
 			previousState: prevStateIndex
 		});
+		extendStep && composeWithLastStep(steps, extendStep(step, itemVM));
 
-		if (extendStep) {
-			const extension = extendStep(step);
-
-			if (extension.length) {
-				const lastStep = steps.pop();
-				steps.push([
-					lastStep,
-					...extension
-				]);
-			}
-		}
-
-		lastState[itemVmId] = steps.length === 1 ? hist.length : ++prevStateIndex;
+		lastState[itemVmId] = steps.length === 1 ? history.length : ++prevStateIndex;
 
 		return steps;
 	};
+}
+
+
+function memo(func: Function): Function {
+	const cache = {};
+
+	return (param: HistoryStep) => (
+		param.id in cache
+			? cache[param.id]
+			: cache[param.id] = func(param)
+	);
+}
+
+function composeWithLastStep(steps: AnimationHistoryStep[], extension: ElementAnimationStep[]): AnimationHistoryStep[] {
+	if (extension.length) {
+		const lastStep = steps.pop();
+		steps.push(extension.concat(lastStep));
+	}
+
+	return steps;
 }
