@@ -11,15 +11,20 @@ import { AnimationControl } from 'src/components/animation-control';
 import { AbstractionConfig } from 'src/containers/adt';
 import './frame.css';
 import { View } from 'src/containers/view';
+import { IconButton } from 'src/components/button';
+import { ExternalLinkIcon } from 'src/components/icons';
 
 export interface FrameProps {
-	title: ReactNode
+	title: ReactNode,
+	id: number,
+	onFullScreenOpen(indexes: Set<number>): void
 }
 
 export class Frame<M, V extends View<M, any>> {
 
 	public ViewModelController: ViewModelController<M, V>;
 	public AnimationController: AnimationController;
+	public name: string;
 
 	private readonly model: M;
 	private readonly View: V;
@@ -27,6 +32,7 @@ export class Frame<M, V extends View<M, any>> {
 
 	constructor(config: AbstractionConfig) {
 		this.AnimationController = new AnimationController();
+		this.name = config.name;
 
 		this.View = config.view;
 		this.model = bindTracker(
@@ -37,13 +43,21 @@ export class Frame<M, V extends View<M, any>> {
 	}
 
 	public component: FunctionComponent<FrameProps> = (props) => {
-		const { title } = props;
+		const { title, id, onFullScreenOpen } = props;
 		const StructureView: any = this.View;
 
 		return (
 			<section className="frame">
 				<header className="frame__header">
-					{title}
+					<div className="title-container">
+						{title}
+						<IconButton
+								className="frame__external-link"
+								onClick={() => onFullScreenOpen(new Set([id]))}
+						>
+							<ExternalLinkIcon />
+						</IconButton>
+					</div>
 					<AnimationControl className="frame__controls"
             onBack={() => this.AnimationController.rewind(this.AnimationController.activeStep - 1)}
             onForward={() => this.AnimationController.rewind(this.AnimationController.activeStep + 1)}

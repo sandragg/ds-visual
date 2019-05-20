@@ -48,8 +48,6 @@ const AnimatedComponent = (props: Props, ref: RefObject<object>) => {
 	);
 };
 
-export const Animated = forwardRef(AnimatedComponent);
-
 /**
  * Define which attributes to use as Animate component prop.
  * @param externalAttrs
@@ -106,3 +104,5 @@ function interpolateValue(begValue, endValue, attr) {
 
 	return interpolate(begValue, endValue)
 }
+
+export const Animated = forwardRef(AnimatedComponent);

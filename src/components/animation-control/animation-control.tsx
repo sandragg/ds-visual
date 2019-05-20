@@ -34,7 +34,7 @@ const AnimationControl = (props: Props) => {
 		onRewind
 	} = props;
 
-	const [ isPaused, setIsPaused ] = useState<boolean>(false);
+	const [ isPaused, setIsPaused ] = useState<boolean>(true);
 
 	const onRestart = useCallback(
 		() => onRewind(0),

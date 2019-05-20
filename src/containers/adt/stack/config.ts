@@ -61,8 +61,8 @@ function validateOperation(operation: string): (model: any) => ValidationRespons
 		}
 
 		return errorText
-				? { isValid: false, errorText }
-				: { isValid: true };
+			? { isValid: false, errorText }
+			: { isValid: true };
 	}
 }
 

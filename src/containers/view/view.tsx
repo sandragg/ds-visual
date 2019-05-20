@@ -29,8 +29,12 @@ const enum RenderType {
 	default
 }
 
+interface Props {
+	dimension: { width: number, height: number }
+}
+
 export abstract class View<M, VType>
-		extends Component<object, ViewModel<VType>>
+		extends Component<Props, ViewModel<VType>>
 		implements ADTView<M, VType> {
 	/**
 	 * View component state.
@@ -87,7 +91,7 @@ export abstract class View<M, VType>
 	public abstract getAnimationBuildOptions(): AnimationBuildOptions;
 
 	public applyViewModel(cb?: CallbackFunction): void {
-		this.previousViewModel = this.viewModel;
+		this.previousViewModel = this.viewModel; // ?
 		this.setState(this.viewModel, typeof cb === 'function' && cb);
 	}
 

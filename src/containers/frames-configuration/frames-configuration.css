@@ -1,0 +1,24 @@
+.configuration__list {
+	font-size: 1.5em;
+	text-transform: capitalize;
+}
+
+.configuration__list .list__item {
+	padding: 6px 0;
+}
+
+.configuration__list .checkbox {
+	display: inline-flex;
+	margin-right: 10px;
+}
+
+.controls-container {
+	display: flex;
+	justify-content: center;
+}
+
+.configuration__control-button {
+	width: 90px;
+	height: 2.5em;
+	font-size: 1em;
+}

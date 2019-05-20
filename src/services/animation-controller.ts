@@ -66,19 +66,22 @@ export class AnimationController {
 	 * Build animation history.
 	 * @param options Options include handlers for animation build specific to each view
 	 */
-	public build(options: AnimationBuildOptions): void {
-		console.log('History', this.trace.history);
-		const buildHandler = buildAnimationStep(options);
-		this.animationTrace.reset();
+	public build(options: AnimationBuildOptions): Promise<void> {
+		return new Promise((resolve, reject) => {
+			console.log('History', this.trace.history);
+			const buildHandler = buildAnimationStep(options);
+			this.animationTrace.reset();
 
-		this.animationTrace.history = this.trace.history.stack.reduce(
-			(res, step) => {
-				res.push(...buildHandler(step, this.animationTrace));
-				return res;
-			},
-			this.animationTrace.history
-		);
-		console.log('animationHistory', this.animationTrace.history);
+			this.animationTrace.history = this.trace.history.stack.reduce(
+					(res, step) => {
+						res.push(...buildHandler(step, this.animationTrace));
+						return res;
+					},
+					this.animationTrace.history
+			);
+			console.log('animationHistory', this.animationTrace.history);
+			resolve();
+		})
 	}
 	/**
 	 * Reset animation:

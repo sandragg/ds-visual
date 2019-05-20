@@ -3,6 +3,7 @@
 	top: 0;
 	left: 0;
 
+	display: flex;
 	width: 100vw;
 	max-width: 2000px;
 	height: calc(85vh - var(--header-height));
@@ -11,6 +12,10 @@
 	padding: 0;
 
 	background: #fff;
+}
+
+.visualization-section > :not(:last-child) {
+	border-right: 2px solid #20093C;
 }
 
 .toolbar {
@@ -63,7 +68,12 @@
 
 .toolbar__animation {
 	left: 80%;
+
+	display: flex;
+	align-items: center;
+
 	height: 1.2em;
+	min-width: 0;
 }
 
 .toolbar__button {

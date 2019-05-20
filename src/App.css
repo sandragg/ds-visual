@@ -5,6 +5,8 @@
 }
 
 .page {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(30deg, #1C053A 0%, #34224B calc(100% - var(--gradient-offset)), #1F3DA7 100%);
 }
 
@@ -44,4 +46,8 @@
     margin: 20px auto;
     padding: 15px 0;
   }
+}
+
+li.list__item {
+  list-style: none;
 }

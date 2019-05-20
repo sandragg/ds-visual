@@ -1,7 +1,37 @@
+.frame {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
 .frame__header {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 
 	padding: 20px 40px;
+}
+
+.frame__header .title-container {
+	position: relative;
+	margin-right: 10px;
+}
+
+.frame__external-link {
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(110%, -50%);
+
+	height: 22px;
+	width: 22px;
+
+	transition: 0.5s opacity ease;
+	opacity: 0;
+}
+
+.frame__header:hover .frame__external-link {
+	opacity: 1;
 }
