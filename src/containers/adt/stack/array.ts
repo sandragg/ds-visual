@@ -47,9 +47,11 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 
 	protected Node = new SubsequentNodeFactory(nodeFactoryConfig);
 
-	protected readonly INITIAL_COORDS: Point = {
-		x: this.Node.width,
-		y: CursorOptions.length + CursorOptions.offset
+	protected getInitialCoords(): Point {
+		return {
+			x: this.Node.width,
+			y: this.props.dimension.height / 2
+		}
 	};
 
 	constructor(props) {

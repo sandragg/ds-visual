@@ -45,9 +45,11 @@ export class LinkedListView<VType> extends View<Stack<VType>, VType> {
 
 	protected Node = new SubsequentNodeFactory(nodeFactoryConfig);
 
-	protected readonly INITIAL_COORDS: Point = {
-		x: window.innerWidth / 4,
-		y: window.innerHeight / 4
+	protected getInitialCoords(): Point {
+		return {
+			x: 2 * this.Node.width,
+			y: this.props.dimension.height / 2
+		}
 	};
 
 	constructor(props) {

@@ -48,10 +48,11 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 
 	protected Node = new SubsequentNodeFactory(nodeFactoryConfig);
 
-	// TODO define init coords relative to view port
-	protected readonly INITIAL_COORDS: Point = {
-		x: 500,
-		y: 400
+	protected getInitialCoords(): Point {
+		return {
+			x: this.props.dimension.width / 2,
+			y: this.props.dimension.height - 4 * this.Node.height
+		}
 	};
 
 	constructor(props) {

@@ -130,7 +130,6 @@ const onTrack = (trace: Trace): TrackHandler => (
 	if (!trace.isUpdating) {
 		return;
 	}
-	console.log(key, result, args, opt, prevResult);
 	const isIndex = !isNaN(Number(key));
 	const prevStep = trace.history.top();
 	const isChanged = prevResult !== undefined;

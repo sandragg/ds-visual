@@ -24,6 +24,9 @@ const Canvas: FunctionComponent<Props> = (props) => {
 	return (
 		<ReactResizeDetector
 			handleWidth handleHeight
+			refreshMode="throttle"
+			refreshRate={80}
+			nodeType="section"
 			onResize={onResize}
 		>
 			<svg className="canvas" ref={ref}>

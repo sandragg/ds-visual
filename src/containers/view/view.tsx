@@ -56,7 +56,7 @@ export abstract class View<M, VType>
 	 * @protected
 	 * @readonly
 	 */
-	protected readonly INITIAL_COORDS: Point = null;
+	protected abstract getInitialCoords(): Point;
 	/**
 	 * Node component template is defined in instance of the derived class through a factory config.
 	 */
@@ -74,8 +74,10 @@ export abstract class View<M, VType>
 	}
 
 	public render() {
+		const coords = this.getInitialCoords();
+		console.log(coords);
 		return (
-				<g transform={`translate(${this.INITIAL_COORDS.x},${this.INITIAL_COORDS.y})`}>
+				<g transform={`translate(${coords.x},${coords.y})`}>
 					{...this.build()}
 				</g>
 		);
