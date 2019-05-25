@@ -4,7 +4,6 @@ import React, {
 	FunctionComponent
 } from 'react';
 import { Canvas } from 'src/components/canvas';
-import { bindTracker } from 'src/services/tracker';
 import { ViewModelController } from 'src/services/view-model-controller';
 import { AnimationController } from 'src/services/animation-controller';
 import { AnimationControl } from 'src/components/animation-control';
@@ -13,6 +12,7 @@ import './frame.css';
 import { View } from 'src/containers/view';
 import { IconButton } from 'src/components/button';
 import { ExternalLinkIcon } from 'src/components/icons';
+import { TrackedModel } from 'src/services/tracked-model';
 
 export interface FrameProps {
 	title: ReactNode,
@@ -26,20 +26,15 @@ export class Frame<M, V extends View<M, any>> {
 	public AnimationController: AnimationController;
 	public name: string;
 
-	private readonly model: M;
+	private readonly model: TrackedModel<M>;
 	private readonly View: V;
 	private viewRef: MutableRefObject<any> = React.createRef();
 
 	constructor(config: AbstractionConfig) {
-		this.AnimationController = new AnimationController();
 		this.name = config.name;
-
 		this.View = config.view;
-		this.model = bindTracker(
-			new config.model(),
-			config.trackedProps,
-			config.trackHandler(this.AnimationController.trace)
-		);
+		this.model = new TrackedModel<M>(config);
+		this.AnimationController = new AnimationController(this.model);
 	}
 
 	public component: FunctionComponent<FrameProps> = (props) => {

@@ -4,29 +4,26 @@ import {
 	ModelAction,
 	ValidationResponse
 } from 'src/services/interface';
+import { TrackedModel } from 'src/services/tracked-model';
 
 export class ViewModelController<M, V extends ADTView<M, any>> {
-	private readonly model: M;
+	private readonly trackedModel: TrackedModel<M>;
 	public readonly view: V;
 
-	constructor(model: M, view: V) {
-		this.model = model;
+	constructor(model: TrackedModel<M>, view: V) {
+		this.trackedModel = model;
 		this.view = view;
 	}
 	public validateModelOperation(handler: (model: M) => ValidationResponse): ValidationResponse {
-		return handler(this.model);
+		return handler(this.trackedModel.model);
 	}
 	// TODO create condition to update the view
-	public build(action: ModelAction,
-               params: any[],
-               history?: HistoryStep[],
-               preUpdateCb?: CallbackFunction,
-               postUpdateCb?: CallbackFunction): Promise<void> {
+	public build(action: ModelAction, params: any[]): Promise<void> {
 		return new Promise(resolve => {
-			const result: any = this.updateModel(action.method, params, preUpdateCb);
+			const result: any = this.updateModel(action.method, params);
 			// @ts-ignore
-			if (action.mutable && result !== this.model.constructor.OUT_OF_DOMAIN) {
-				this.updateView(postUpdateCb || preUpdateCb, history);
+			if (action.mutable && result !== this.trackedModel.model.constructor.OUT_OF_DOMAIN) {
+				this.updateView();
 			}
 			resolve(result);
 		});
@@ -44,14 +41,16 @@ export class ViewModelController<M, V extends ADTView<M, any>> {
 		});
 	}
 
-	private updateModel(action: string, params: any[], cb?: CallbackFunction): any {
+	private updateModel(action: string, params: any[]): any {
+		this.trackedModel.history.reset();
+		this.trackedModel.toggleUpdateFlag();
+		const result = this.trackedModel.model[action](...params);
+		this.trackedModel.toggleUpdateFlag();
 
-		typeof cb === 'function' && cb();
-		return this.model[action](...params);
+		return result;
 	}
 
-	private updateView(cb?: CallbackFunction, history?: HistoryStep[]): void {
-		typeof cb === 'function' && cb();
-		this.view.buildViewModel(this.model, history);
+	private updateView(): void {
+		this.view.buildViewModel(this.trackedModel.model, this.trackedModel.history.stack);
 	}
 }

@@ -183,7 +183,7 @@ function actionHandler(frames: { [key: string]: Frame<any, any> },
 	// Build models and start animation
 	renderPromise
 		.then(() => applyToAll(
-			ctrl => ctrl[0].build(action, params, ctrl[1].trace.history.stack, ctrl[1].toggleHistoryStatus)
+			ctrl => ctrl[0].build(action, params)
 		))
 		.then(res => {
 			actionResultHandler(res[0]);

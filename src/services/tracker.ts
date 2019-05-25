@@ -1,10 +1,11 @@
 import {
-	IFunction, Trace,
+	IFunction,
 	TrackedClassItem,
 	TrackedItemOption
 } from './interface';
 import { TrackedActions } from 'src/services/constants';
 import { areObjectsEqual } from 'src/utils/animation';
+import { TrackedModel } from 'src/services/tracked-model';
 
 type ProxyApplyHandler = ProxyHandler<IFunction>['apply'];
 type ProxyConstructHandler = ProxyHandler<IFunction>['construct'];
@@ -119,7 +120,7 @@ function wrapObjectItem(instance: any, handler: TrackHandler, option?: TrackedIt
  * @param [prop, action] Tracked property
  * @param prevResult Previous value for mutating action (optional)
  */
-const onTrack = (trace: Trace): TrackHandler => (
+const onTrack = (trace: TrackedModel): TrackHandler => (
 		key: string | number,
 		result: any,
 		args: any[],

@@ -1,6 +1,5 @@
 import {
 	RefObject,
-	ComponentType,
 	ReactNode,
 	FunctionComponent
 } from 'react';
@@ -12,9 +11,6 @@ import {
 	TrackedActions
 } from 'src/services/constants';
 import { HashMap } from 'react-move';
-import { History } from 'src/services/history';
-import { AnimationController } from 'src/services/animation-controller';
-import { ViewModelController } from 'src/services/view-model-controller';
 import { AnimationBuildOptions } from 'src/utils/utils.interface';
 
 export interface Structure {
@@ -145,17 +141,6 @@ export interface ADTView<M, VType> {
 	applyViewModel(cb?: CallbackFunction): void,
 	prerender(cb?: CallbackFunction): void,
 	getAnimationBuildOptions(): AnimationBuildOptions
-}
-
-export interface Trace {
-	history: History,
-	isUpdating: boolean
-}
-
-export interface ViewFrame<M, V extends ADTView<M, any>> {
-	ViewModelController: ViewModelController<M, V>,
-	AnimationController: AnimationController,
-	component: ComponentType
 }
 
 export interface ValidationResponse {

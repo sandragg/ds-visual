@@ -1,17 +1,14 @@
 import {
-	Trace,
 	AnimationHistoryStep,
 	ElementAnimationStep,
-	HistoryStep,
 	PromiseDefer,
-	ViewModel
 } from 'src/services/interface';
 import { buildAnimationStep, defer } from 'src/utils/animation';
 import animationStyles from 'src/services/animation-style';
 import { PromiseStatus, TrackedActions } from 'src/services/constants';
 import { AnimationHistory } from 'src/services/animation-history';
-import { History } from 'src/services/history';
 import { AnimationBuildOptions } from 'src/utils/utils.interface';
+import { TrackedModel } from 'src/services/tracked-model';
 
 /**
  * Controller to manage animation.
@@ -19,22 +16,7 @@ import { AnimationBuildOptions } from 'src/utils/utils.interface';
  * Provides methods to play/pause/rewind animation steps.
  */
 export class AnimationController {
-	/**
-	 * Trace consists of actions history and flag which shows if the history is updating at the moment.
-	 *
-	 * In order to remain actions performed inside model it is wrapped in tracker (in Frame component).
-	 * History is built during model update: every access to a model tracked property calls trackHandler
-	 * which will push new step into history - that is what tracker wrapper provides and there is no way
-	 * to temporarily turn it off. So, it also possible to change history through a trackHandler beyond
-	 * the model update, for example, during view model build where also getting access to the model properties.
-	 *
-	 * Aim of flag to prevent these history changes. Flag is toggled before and after view model build.
-	 * As trackHandler accepts trace parameter it's possible to check flag inside and terminate history change.
-	 */
-	public trace: Trace = {
-		history: new History(),
-		isUpdating: false
-	};
+	public trace: TrackedModel;
 	/**
 	 * Animation history.
 	 */
@@ -50,17 +32,11 @@ export class AnimationController {
 	 */
 	private activeAnimation: PromiseDefer = null;
 
-	constructor() {
-		this.toggleHistoryStatus = this.toggleHistoryStatus.bind(this);
+	constructor(model: TrackedModel) {
+		this.trace = model;
 		this.play = this.play.bind(this);
 		this.pause = this.pause.bind(this);
 		this.rewind = this.rewind.bind(this);
-	}
-	/**
-	 * Callback to toggle trace flag that shows history update status.
-	 */
-	public toggleHistoryStatus(): void {
-		this.trace.isUpdating = !this.trace.isUpdating;
 	}
 	/**
 	 * Build animation history.
@@ -96,8 +72,6 @@ export class AnimationController {
 			this.activeAnimation.reject('animation is reseted');
 			this.activeAnimation = null;
 		}
-		this.trace.isUpdating = false;
-		this.trace.history.reset();
 		this.animationTrace.reset();
 		this.activeStep = -1;
 	}
