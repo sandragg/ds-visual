@@ -37,6 +37,7 @@ export class AnimationController {
 		this.play = this.play.bind(this);
 		this.pause = this.pause.bind(this);
 		this.rewind = this.rewind.bind(this);
+		this.reset = this.reset.bind(this);
 	}
 	/**
 	 * Build animation history.

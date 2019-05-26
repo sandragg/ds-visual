@@ -14,10 +14,11 @@ export class ViewModelController<M, V extends ADTView<M, any>> {
 		this.trackedModel = model;
 		this.view = view;
 	}
+
 	public validateModelOperation(handler: (model: M) => ValidationResponse): ValidationResponse {
 		return handler(this.trackedModel.model);
 	}
-	// TODO create condition to update the view
+
 	public build(action: ModelAction, params: any[]): Promise<void> {
 		return new Promise(resolve => {
 			const result: any = this.updateModel(action.method, params);

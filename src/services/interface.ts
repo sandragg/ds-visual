@@ -147,3 +147,8 @@ export interface ValidationResponse {
 	isValid: boolean,
 	errorText?: string
 }
+
+export interface Dimension {
+	width: number,
+	height: number
+}

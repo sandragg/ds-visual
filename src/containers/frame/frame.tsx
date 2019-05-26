@@ -61,7 +61,7 @@ export class Frame<M, V extends View<M, any>> {
 						onRewind={this.AnimationController.rewind}
 					/>
 				</header>
-				<Canvas>
+				<Canvas onResize={this.AnimationController.reset} >
 					<StructureView
 						ref={ref => {
 							this.viewRef.current = ref;
