@@ -1,6 +1,7 @@
 import React from 'react';
 import {
 	ArrowViewModel,
+	Dimension,
 	ElementViewModel,
 	HistoryStep,
 	NodeViewModel,
@@ -8,23 +9,11 @@ import {
 	ViewModel
 } from 'src/services/interface';
 import { getById } from 'src/utils/animation';
-import {
-	ArrowType,
-	CursorOptions,
-	Position,
-	Direction,
-	FieldType
-} from 'src/services/constants';
+import { ArrowType, Direction, FieldType, Position } from 'src/services/constants';
 import { View } from 'src/containers/view';
 import { Stack } from 'src/abstract-data-types/stack/array';
-import {
-	SubsequentNodeFactory,
-	SubsequentNodeFactoryConfig
-} from 'src/services/node-factory';
-import {
-	calculateArrowMatrix,
-	calculateCursorCoords
-} from 'src/utils/positioning';
+import { SubsequentNodeFactory, SubsequentNodeFactoryConfig } from 'src/services/node-factory';
+import { calculateArrowMatrix, calculateCursorCoords, getDirectionByPosition } from 'src/utils/positioning';
 import { AnimationBuildOptions } from 'src/utils/utils.interface';
 import { HashMap } from 'react-move';
 
@@ -127,7 +116,8 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 		}
 		arrows[0] = this.buildCursorViewModel(null, 'up');
 
-		return viewModel;
+		this.totalViewModel = viewModel;
+		return this.buildResponsiveViewModel(viewModel);
 	}
 
 	private mapToAnimateAttrs(id: number | string, attrs: HashMap): HashMap {
@@ -143,4 +133,20 @@ export class ArrayView<VType> extends View<Stack<VType>, VType> {
 			transform: [`matrix(${calculateArrowMatrix(outPoint, inPoint).matrix})`]
 		}
 	}
+
+	protected buildResponsiveViewModel(totalVM: ViewModel<VType>): ViewModel<VType> {
+		const maxAmount = maxNodesAmount(this.props.dimension, this.Node);
+		console.log(maxAmount);
+		if (maxAmount <= totalVM.nodes.length) {
+			return totalVM;
+		}
+		return totalVM;
+	}
+}
+
+function maxNodesAmount(dimension: Dimension, Node: SubsequentNodeFactory): number {
+	const isVertical = getDirectionByPosition(Node.sequencePosition) === Direction.vertical;
+	const nodeLength = Node.offset + (isVertical ? Node.height : Node.width);
+
+	return Math.floor((isVertical ? dimension.height : dimension.width) / nodeLength);
 }

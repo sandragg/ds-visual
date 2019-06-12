@@ -235,6 +235,10 @@ export class LinkedListView<VType> extends View<Stack<VType>, VType> {
 
 		return { ...other };
 	}
+
+	protected buildResponsiveViewModel(totalVM: ViewModel<VType>): ViewModel<VType> {
+		return totalVM;
+	}
 }
 
 function getNodeCalculatedCoords(id: number | string, vm: ViewModel<{}>, animationTrace: AnimationHistory): Point {

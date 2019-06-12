@@ -171,4 +171,8 @@ export class AbstractView<VType> extends View<Stack<VType>, VType> {
 			type: ArrowType.cursor
 		};
 	}
+
+	protected buildResponsiveViewModel(totalVM: ViewModel<VType>): ViewModel<VType> {
+		return undefined;
+	}
 }

@@ -3,13 +3,14 @@ import { Component, ReactNode } from 'react';
 import {
 	ADTView,
 	ArrowViewModel,
-	CallbackFunction,
+	CallbackFunction, Dimension,
 	NodeFactory,
 	NodeViewModel,
 	Point,
 	ViewModel
 } from 'src/services/interface';
 import {
+	areObjectsEqual,
 	getById,
 	getNodeCenterPoint,
 } from 'src/utils/animation';
@@ -30,12 +31,14 @@ const enum RenderType {
 }
 
 interface Props {
-	dimension: { width: number, height: number }
+	dimension: Dimension
 }
 
 export abstract class View<M, VType>
 		extends Component<Props, ViewModel<VType>>
 		implements ADTView<M, VType> {
+	public dimension: Dimension;
+	public totalViewModel: ViewModel<VType>;
 	/**
 	 * View component state.
 	 * @public
@@ -51,6 +54,11 @@ export abstract class View<M, VType>
 	 * @public
 	 */
 	public previousViewModel: ViewModel<VType>;
+
+	constructor(props) {
+		super(props);
+		this.dimension = props.dimension;
+	}
 	/**
 	 * Initial coordinates for structure view.
 	 * @protected
@@ -73,13 +81,21 @@ export abstract class View<M, VType>
 		this.renderType = RenderType.default;
 	}
 
+	public componentDidUpdate(prevProps, prevState) {
+		if (!areObjectsEqual(this.props.dimension, this.dimension)) {
+			this.dimension = this.props.dimension;
+			this.viewModel = this.buildResponsiveViewModel(this.totalViewModel);
+			this.applyViewModel();
+		}
+	}
+
 	public render() {
 		const coords = this.getInitialCoords();
-		console.log(coords);
+
 		return (
-				<g transform={`translate(${coords.x},${coords.y})`}>
-					{...this.build()}
-				</g>
+			<g transform={`translate(${coords.x},${coords.y})`}>
+				{...this.build()}
+			</g>
 		);
 	}
 	/**
@@ -91,10 +107,11 @@ export abstract class View<M, VType>
 	 */
 	public abstract buildViewModel(model: M): void;
 	public abstract getAnimationBuildOptions(): AnimationBuildOptions;
+	protected abstract buildResponsiveViewModel(totalVM: ViewModel<VType>): ViewModel<VType>;
 
 	public applyViewModel(cb?: CallbackFunction): void {
 		this.previousViewModel = this.viewModel; // ?
-		this.setState(this.viewModel, typeof cb === 'function' && cb);
+		this.setState(this.viewModel, typeof cb === 'function' ? cb : null);
 	}
 
 	public prerender(cb?: CallbackFunction): void {
