@@ -1,7 +1,7 @@
 export class Stack<VType> implements ADTStack<VType> {
 
 	public static readonly OUT_OF_DOMAIN: number = -1;
-	public static readonly STACK_SIZE: number = 20;
+	public static readonly STACK_SIZE: number = 10;
 
 	private readonly stack: VType[];
 	private up: number;

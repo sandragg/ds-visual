@@ -3,5 +3,6 @@ export const ROUTES = {
 	'ALGS_AND_DS': '/gallery',
 	'ABOUT': '/about',
 	'VISUAL': `/visual/:id`,
-	'INFO': `/gallery/:id`
+	'INFO': `/gallery/:id`,
+	'GUIDE': `/guide`
 };

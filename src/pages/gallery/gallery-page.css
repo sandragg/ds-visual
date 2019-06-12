@@ -1,0 +1,15 @@
+.guide-link-button {
+	color: #fff;
+	font-size: 2em;
+	font-family: Rubik, sans-serif;
+}
+
+.guide-link-button:hover {
+	color: #ED5B3B;
+}
+
+.button-container {
+	margin-bottom: 40px;
+
+	text-align: center;
+}

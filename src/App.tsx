@@ -16,6 +16,7 @@ const App = () => {
 					<Route path={ROUTES.ABOUT} component={Pages.AboutPage} />
 					<Route path={ROUTES.VISUAL} component={Pages.VisualizationPage} />
 					<Route path={ROUTES.INFO} component={Pages.InfoPage} />
+					<Route path={ROUTES.GUIDE} component={Pages.GuidePage} />
 				</main>
 			</div>
 		</BrowserRouter>

@@ -1,0 +1,15 @@
+.picture-container {
+	width: auto;
+	height: auto;
+	align-items: center;
+}
+
+.picture-container img {
+	max-width: 700px;
+	height: auto;
+
+	margin-bottom: 30px;
+
+	object-fit: contain;
+	border: 1px solid #34224B;
+}

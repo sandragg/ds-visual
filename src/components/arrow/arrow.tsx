@@ -44,12 +44,12 @@ function defineLinkArrowPath(length: number): string {
 	return (
 		`
       M 0 0
-      H ${tailsCenter}
-      M ${tailsCenter} 0
+      H ${tailsCenter - 6}
       L ${tailsCenter - ARROW_TAIL_OPTIONS.HEIGHT} ${ARROW_TAIL_OPTIONS.WIDTH / 2}
-      L ${tailsCenter - 6} 0
-      L ${tailsCenter - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
       L ${tailsCenter} 0
+      L ${tailsCenter - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
+      L ${tailsCenter - 6} 0
+      M ${tailsCenter} 0
       H ${length}
     `
 	);
@@ -59,11 +59,22 @@ function defineCursorArrowPath(length: number): string {
 	return (
 		`
 			M 0 0
-			H ${length}
+			H ${length - 6}
 			L ${length - ARROW_TAIL_OPTIONS.HEIGHT} ${ARROW_TAIL_OPTIONS.WIDTH / 2}
-      L ${length - 6} 0
-      L ${length - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
-      L ${length} 0
+	    L ${length} 0
+	    L ${length - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
+	    L ${length - 6} 0
 		`
+
 	);
 }
+
+//
+// `
+// 			M 0 0
+// 			H ${length}
+// 			L ${length - ARROW_TAIL_OPTIONS.HEIGHT} ${ARROW_TAIL_OPTIONS.WIDTH / 2}
+//       L ${length - 6} 0
+//       L ${length - ARROW_TAIL_OPTIONS.HEIGHT} -${ARROW_TAIL_OPTIONS.WIDTH / 2}
+//       L ${length} 0
+// 		`
