@@ -1,11 +1,11 @@
-# DS Visual
+**DS Visual** - *data structures visualizer* - service for learning base abstract data types.
 
-**DS Visual** - *DCV (data structure visualizer)* - сервис для визуализации структур данных и алгоритмов.
+**Advantages:**
+- switch between different levels of abstraction and visualize various implementations of the specific abstract data type;
+- perform main operations on the ADT and see their algorithm step by step;
+- combine several implementations on the screen at the same time for more convenient comparison.
 
-## Кому будет полезно?
-Основная цель DS Visual - помощь в изучении 
-[структур данных](https://ru.wikipedia.org/wiki/%D0%A1%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
-и [АТД](https://ru.wikipedia.org/wiki/%D0%90%D0%B1%D1%81%D1%82%D1%80%D0%B0%D0%BA%D1%82%D0%BD%D1%8B%D0%B9_%D1%82%D0%B8%D0%BF_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85). Визуализация моделей и базовых операций поможет быстрее освоить работу с основными структурами.
+Here is a short [demo video](https://github.com/sandragg/ds-visual/blob/master/ds-visual.mov)!
 
 ## Установка 
 ```
