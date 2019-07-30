@@ -14,7 +14,9 @@ export class Stack<VType> implements ADTStack<VType> {
 				return this._up;
 			},
 			set(v) {
-				return this._up = v;
+				const prevValue = this._up;
+				this._up = v;
+				return prevValue;
 			},
 			configurable: true
 		});

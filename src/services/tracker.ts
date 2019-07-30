@@ -85,8 +85,9 @@ function bindTracker<M>(thisArg: M,
 			get: get && new Proxy(get, { apply }),
 			set: set && new Proxy(set, {
 				apply(target: IFunction, thisArg: object, argArray?: any): any {
-					const prev: any = Reflect.get(thisArg, itemName);
-					const res: any = Reflect.apply(target, thisArg, argArray);
+					// const prev: any = Reflect.get(thisArg, itemName);
+					const res = argArray[0];
+					const prev: any = Reflect.apply(target, thisArg, argArray);
 					handler(itemName, res, argArray, option, prev);
 					return res;
 				}

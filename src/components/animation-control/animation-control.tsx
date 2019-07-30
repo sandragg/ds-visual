@@ -37,7 +37,10 @@ const AnimationControl = (props: Props) => {
 	const [ isPaused, setIsPaused ] = useState<boolean>(true);
 
 	const onRestart = useCallback(
-		() => onRewind(0),
+		() => {
+			onRewind(0);
+			setIsPaused(true);
+		},
 		[onRewind]
 	);
 	const togglePlayback = useCallback(
@@ -57,7 +60,7 @@ const AnimationControl = (props: Props) => {
 			{stepsAmount}
 			{
 				onBack && (
-					<IconButton onClick={onBack}>
+					<IconButton onClick={() => { setIsPaused(true); onBack(); }}>
 						<BackIcon />
 					</IconButton>
 				)
@@ -75,7 +78,7 @@ const AnimationControl = (props: Props) => {
 			}
 			{
 				onForward && (
-					<IconButton onClick={onForward}>
+					<IconButton onClick={() => { setIsPaused(true); onForward(); }}>
 						<ForwardIcon />
 					</IconButton>
 				)
